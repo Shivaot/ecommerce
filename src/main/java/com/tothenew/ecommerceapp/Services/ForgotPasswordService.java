@@ -80,11 +80,10 @@ public class ForgotPasswordService {
         } catch (NullPointerException ex) {
             return "no email found";
         }
-        Date currentDate = new Date();
-        int milliseconds = (int) (forgotPasswordToken.getExpiryDate().getTime() - currentDate.getTime());
-        long days = TimeUnit.MILLISECONDS.toDays(milliseconds);
-        System.out.println(days);
-        if (days > 1) {
+        Date date = new Date();
+        long diff = date.getTime() - forgotPasswordToken.getExpiryDate().getTime();
+        long diffHours = diff / (60 * 60 * 1000);
+        if (diffHours > 24) {
             forgotPasswordTokenRepo.deleteByUserEmail(email);
             return "Token has expired";
         }
