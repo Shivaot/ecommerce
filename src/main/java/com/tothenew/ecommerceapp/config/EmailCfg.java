@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EmailCfg {
+
     @Value("${spring.mail.host}")
     private String host;
 

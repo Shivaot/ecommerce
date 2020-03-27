@@ -37,6 +37,7 @@ public class Bootstrap implements ApplicationRunner {
             shiva.setActive(true);
             shiva.setDeleted(false);
             shiva.setPassword(passwordEncoder.encode("pass"));
+
             Role role = new Role();
             role.setAuthority("ROLE_ADMIN");
             Role role1 = new Role();

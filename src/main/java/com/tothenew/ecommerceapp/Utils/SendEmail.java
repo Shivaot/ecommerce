@@ -15,6 +15,7 @@ public class SendEmail {
 
     @Async
     public void sendEmail(String subject,String text,String sendTo) {
+
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(emailCfg.getHost());
         mailSender.setPort(emailCfg.getPort());

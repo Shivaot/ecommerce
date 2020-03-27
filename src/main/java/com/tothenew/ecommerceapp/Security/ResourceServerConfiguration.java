@@ -53,6 +53,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http
                 .authorizeRequests()
                 .antMatchers("/").anonymous()
+                .antMatchers("/customer/re-sendActivation").permitAll()
                 .antMatchers("/resetPassword").permitAll()
                 .antMatchers("/token/**").permitAll()
                 .antMatchers("/customer/activate").permitAll()

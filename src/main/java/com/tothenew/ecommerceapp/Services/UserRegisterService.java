@@ -1,8 +1,10 @@
 package com.tothenew.ecommerceapp.Services;
 
 import com.tothenew.ecommerceapp.Entities.Users.*;
+import com.tothenew.ecommerceapp.Repositories.CustomerActivateRepo;
 import com.tothenew.ecommerceapp.Repositories.SellerRepo;
 import com.tothenew.ecommerceapp.Repositories.UserRepo;
+import com.tothenew.ecommerceapp.Utils.SendEmail;
 import com.tothenew.ecommerceapp.Utils.ValidEmail;
 import com.tothenew.ecommerceapp.Utils.ValidGst;
 import com.tothenew.ecommerceapp.Utils.ValidPassword;
@@ -30,6 +32,12 @@ public class UserRegisterService {
     @Autowired
     ValidGst validGst;
 
+    @Autowired
+    CustomerActivateRepo customerActivateRepo;
+
+    @Autowired
+    SendEmail sendEmail;
+
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public String registerCustomer(Customer customer) {
@@ -46,7 +54,7 @@ public class UserRegisterService {
 //                ex.printStackTrace();
             }
 
-        boolean isValidPassword = validPassword.isValidPassword(customer.getPassword());
+        boolean isValidPassword = ValidPassword.isValidPassword(customer.getPassword());
         if (!isValidPassword) {
             return "password is invalid";
         }
@@ -65,6 +73,18 @@ public class UserRegisterService {
         customer.setPasswordExpired(false);
 
         userRepo.save(customer);
+
+        String token = UUID.randomUUID().toString();
+
+        CustomerActivate customerActivate = new CustomerActivate();
+        customerActivate.setToken(token);
+        customerActivate.setUserEmail(customer.getEmail());
+        customerActivate.setExpiryDate(new Date());
+
+        customerActivateRepo.save(customerActivate);
+
+        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN",token,customer.getEmail());
+
         return "Success";
     }
 
@@ -108,7 +128,7 @@ public class UserRegisterService {
         } catch (NullPointerException ex) {
 //            ex.printStackTrace();
         }
-        boolean isValidPassword = validPassword.isValidPassword(seller.getPassword());
+        boolean isValidPassword = ValidPassword.isValidPassword(seller.getPassword());
         if (!isValidPassword) {
             return "password is invalid";
         }
