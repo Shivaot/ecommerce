@@ -1,7 +1,10 @@
 package com.tothenew.ecommerceapp.BootstrapLoader;
 
 import com.tothenew.ecommerceapp.Entities.Users.Admin;
+import com.tothenew.ecommerceapp.Entities.Users.CustomerActivate;
 import com.tothenew.ecommerceapp.Entities.Users.Role;
+import com.tothenew.ecommerceapp.Entities.Users.User;
+import com.tothenew.ecommerceapp.Repositories.CustomerActivateRepo;
 import com.tothenew.ecommerceapp.Repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -10,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,6 +26,7 @@ public class Bootstrap implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+
         if(userRepository.count()<1){
 
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

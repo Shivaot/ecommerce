@@ -15,19 +15,19 @@ class EcommerceAppApplicationTests {
 
     @Autowired
     UserRepo userRepo;
-    /*
+
     @Test
     void createAdminUser() {
         Admin admin = new Admin();
         admin.setFirstName("Shiva");
         admin.setLastName("Tiwari");
         admin.setEmail("shiva@tiwari.com");
-        admin.setPhoneNumber(100);
+//        admin.setPhoneNumber(100);
         admin.setPassword("admin");
-        admin.setDateOfJoining(new Date());
+//        admin.setDateOfJoining(new Date());
 
         // ADMIN SPECIFIC ATTRIBUTE
-        admin.setAdminTask("Give Permissions");
+//        admin.setAdminTask("Give Permissions");
 
         // DEFINE ROLE FOR ADMIN
         Role role = new Role();
@@ -49,8 +49,8 @@ class EcommerceAppApplicationTests {
         seller.setLastName("Singh");
         seller.setEmail("rishabh.singh@gmail.com");
         seller.setPassword("rishabSingh123");
-        seller.setPhoneNumber(9898989);
-        seller.setDateOfJoining(new Date());
+//        seller.setPhoneNumber(9898989);
+//        seller.setDateOfJoining(new Date());
 
         // DEFINE ROLE FOR SELLER
         Role role = new Role();
@@ -66,8 +66,8 @@ class EcommerceAppApplicationTests {
         seller.setRoles(roleSet);
 
         // SELLER SPECIFIC ATTRIBUTES
-        seller.setTotalProducts(12);
-        seller.setType("Fashion Seller");
+//        seller.setTotalProducts(12);
+//        seller.setType("Fashion Seller");
 
         // SAVING SELLER
         userRepo.save(seller);
@@ -79,9 +79,9 @@ class EcommerceAppApplicationTests {
         customerRohit.setFirstName("Rohit");
         customerRohit.setLastName("Sharma");
         customerRohit.setEmail("rohit.sharma@gmail.com");
-        customerRohit.setPhoneNumber(1233121);
+//        customerRohit.setPhoneNumber(1233121);
         customerRohit.setPassword("rohitSharma123");
-        customerRohit.setDateOfJoining(new Date());
+//        customerRohit.setDateOfJoining(new Date());
 
         // DEFINING ROLE TO BUYER
         Role role = new Role();
@@ -117,6 +117,6 @@ class EcommerceAppApplicationTests {
         userRepo.save(customerRohit);
     }
 
-     */
+
 
 }

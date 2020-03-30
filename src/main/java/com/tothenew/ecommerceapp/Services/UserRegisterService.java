@@ -51,7 +51,7 @@ public class UserRegisterService {
                     return "Email already exists";
                 }
             } catch (NullPointerException ex) {
-//                ex.printStackTrace();
+//                ex.printStackTrace(); // use logger here
             }
 
         boolean isValidPassword = ValidPassword.isValidPassword(customer.getPassword());

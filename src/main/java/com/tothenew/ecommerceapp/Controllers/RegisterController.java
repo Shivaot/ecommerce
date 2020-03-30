@@ -24,8 +24,10 @@ public class RegisterController {
     String registerCustomer(@RequestBody Customer customer, HttpServletResponse httpServletResponse) {
 
         String getMessage = userRegisterService.registerCustomer(customer);
+        // use logger
         System.out.println(getMessage + "for customer");
-        if (getMessage.equals("Success")) {
+        // content equals
+        if ("Success".equals(getMessage)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
         }
         else  {
