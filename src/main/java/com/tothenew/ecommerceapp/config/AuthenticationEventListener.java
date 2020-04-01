@@ -1,10 +1,10 @@
 package com.tothenew.ecommerceapp.config;
 
-import com.tothenew.ecommerceapp.Entities.Users.User;
-import com.tothenew.ecommerceapp.Entities.Users.UserLoginFailCounter;
-import com.tothenew.ecommerceapp.Repositories.UserLoginFailCounterRepo;
-import com.tothenew.ecommerceapp.Repositories.UserRepo;
-import com.tothenew.ecommerceapp.Utils.SendEmail;
+import com.tothenew.ecommerceapp.entities.users.User;
+import com.tothenew.ecommerceapp.entities.users.UserLoginFailCounter;
+import com.tothenew.ecommerceapp.repositories.UserLoginFailCounterRepo;
+import com.tothenew.ecommerceapp.repositories.UserRepo;
+import com.tothenew.ecommerceapp.utils.SendEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;

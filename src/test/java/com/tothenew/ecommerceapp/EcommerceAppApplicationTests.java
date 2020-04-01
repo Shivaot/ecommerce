@@ -1,12 +1,11 @@
 package com.tothenew.ecommerceapp;
 
-import com.tothenew.ecommerceapp.Entities.Users.*;
-import com.tothenew.ecommerceapp.Repositories.UserRepo;
+import com.tothenew.ecommerceapp.entities.users.*;
+import com.tothenew.ecommerceapp.repositories.UserRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
