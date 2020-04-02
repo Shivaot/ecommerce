@@ -54,7 +54,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
                 .antMatchers("/customer/re-sendActivation").permitAll()
                 .antMatchers("/resetPassword").permitAll()
                 .antMatchers("/token/**").permitAll()
-                .antMatchers("/customer/activate").permitAll()
+                .antMatchers("/customer/activate/**").permitAll()
                 .antMatchers("/register/**").permitAll()
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/user/home").hasAnyRole("CUSTOMER")

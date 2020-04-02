@@ -29,18 +29,12 @@ public class CustomerActivateService {
     SendEmail sendEmail;
 
     @Transactional
-    public String activateCustomer(String email, String token) {
-        if (!validEmail.checkEmailValid(email)) {
-            return "invalid email";
-        }
-        CustomerActivate customerActivate = customerActivateRepo.findByUserEmail(email);
+    public String activateCustomer(String token) {
+        CustomerActivate customerActivate = customerActivateRepo.findByToken(token);
         try {
-            if (customerActivate.getUserEmail().equals(null)) {
+            if (customerActivate.getToken().equals(null)) {
             }
         } catch (NullPointerException ex) {
-            return "no email found";
-        }
-        if (!customerActivate.getToken().equals(token)) {
             return "invalid token";
         }
         Date date = new Date();
@@ -48,27 +42,27 @@ public class CustomerActivateService {
         long diffHours = diff / (60 * 60 * 1000);
         // token expire case
         if (diffHours > 24) {
-            customerActivateRepo.deleteByUserEmail(email);
+            customerActivateRepo.deleteByUserEmail(customerActivate.getUserEmail());
 
             String newToken = UUID.randomUUID().toString();
 
             CustomerActivate localCustomerActivate = new CustomerActivate();
             localCustomerActivate.setToken(newToken);
-            localCustomerActivate.setUserEmail(email);
+            localCustomerActivate.setUserEmail(customerActivate.getUserEmail());
             localCustomerActivate.setExpiryDate(new Date());
 
             customerActivateRepo.save(localCustomerActivate);
 
-            sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", newToken, email);
+            sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/"+newToken, customerActivate.getUserEmail());
 
             return "Token has expired";
         }
         if (customerActivate.getToken().equals(token)) {
-            User user = userRepo.findByEmail(email);
+            User user = userRepo.findByEmail(customerActivate.getUserEmail());
             user.setActive(true);
             userRepo.save(user);
-            sendEmail.sendEmail("ACCOUNT ACTIVATED", "Your account has been activated", email);
-            customerActivateRepo.deleteByUserEmail(email);
+            sendEmail.sendEmail("ACCOUNT ACTIVATED", "Your account has been activated", customerActivate.getUserEmail());
+            customerActivateRepo.deleteByUserEmail(customerActivate.getUserEmail());
             return "Success";
         }
 
@@ -102,7 +96,7 @@ public class CustomerActivateService {
 
             customerActivateRepo.save(localCustomerActivate);
 
-            sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", newToken, email);
+            sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/"+newToken, email);
 
             return "Success";
         }

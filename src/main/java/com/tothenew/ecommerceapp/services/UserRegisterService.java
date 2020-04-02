@@ -78,7 +78,7 @@ public class UserRegisterService {
 
         customerActivateRepo.save(customerActivate);
 
-        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN", token, customer.getEmail());
+        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/"+token, customer.getEmail());
 
         return "Success";
     }
