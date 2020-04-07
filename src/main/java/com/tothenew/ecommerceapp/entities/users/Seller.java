@@ -1,7 +1,9 @@
 package com.tothenew.ecommerceapp.entities.users;
 
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
+import com.tothenew.ecommerceapp.entities.product.Product;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "user_id")
@@ -11,6 +13,8 @@ public class Seller extends User {
     private String companyContact;
     private String companyName;
 
+    @OneToMany(mappedBy = "seller",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private Set<Product> products;
 
     public String getGst() {
         return gst;
@@ -36,4 +40,11 @@ public class Seller extends User {
         this.companyName = companyName;
     }
 
+    public Set<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        this.products = products;
+    }
 }

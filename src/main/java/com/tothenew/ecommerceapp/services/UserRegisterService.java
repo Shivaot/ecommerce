@@ -19,21 +19,16 @@ import java.util.*;
 public class UserRegisterService {
 
     @Autowired
-    private UserRepo userRepo;
-
-    @Autowired
     SellerRepo sellerRepo;
-
     @Autowired
     ValidGst validGst;
-
     @Autowired
     CustomerActivateRepo customerActivateRepo;
-
     @Autowired
     SendEmail sendEmail;
-
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private UserRepo userRepo;
 
     public String registerCustomer(Customer customer) {
 //        boolean isValidEmail = validEmail.checkEmailValid(customer.getEmail());
@@ -78,7 +73,7 @@ public class UserRegisterService {
 
         customerActivateRepo.save(customerActivate);
 
-        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/"+token, customer.getEmail());
+        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/" + token, customer.getEmail());
 
         return "Success";
     }
@@ -142,10 +137,10 @@ public class UserRegisterService {
         seller.setPasswordExpired(false);
 
 
-        Set<Address> address = seller.getAddresses();
-        address.forEach(address1 -> {
-            Address address2 = address1;
-            address2.setUser(seller);
+        Set<Address> addresses = seller.getAddresses();
+        addresses.forEach(address -> {
+            Address addressSave = address;
+            addressSave.setUser(seller);
         });
 
         userRepo.save(seller);
