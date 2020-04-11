@@ -1,6 +1,7 @@
 package com.tothenew.ecommerceapp.entities.users;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Pattern;

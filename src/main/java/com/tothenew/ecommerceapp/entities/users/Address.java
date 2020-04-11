@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 @Entity
 public class Address {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;

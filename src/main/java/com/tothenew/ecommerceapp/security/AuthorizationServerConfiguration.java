@@ -29,7 +29,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     UserDetailsService userDetailsService;
 
-
     public AuthorizationServerConfiguration() {
         super();
     }

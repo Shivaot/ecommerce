@@ -26,9 +26,7 @@ public class RegisterController {
 
         String getMessage = userRegisterService.registerCustomer(customer);
         // use logger
-        System.out.println(getMessage + "for customer");
-        // content equals
-        if ("Success".equals(getMessage)) {
+        if ("Success".contentEquals(getMessage)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
         } else {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -39,7 +37,7 @@ public class RegisterController {
     @PostMapping("register/seller")
     String registerSeller(@Valid @RequestBody Seller seller, HttpServletResponse httpServletResponse) {
         String getMessage = userRegisterService.registerSeller(seller);
-        if (getMessage.equals("Success")) {
+        if (getMessage.contentEquals("Success")) {
             sendEmail.sendEmail("ACCOUNT CREATED", "Your account has been created waiting for approval", seller.getEmail());
             httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
         } else {

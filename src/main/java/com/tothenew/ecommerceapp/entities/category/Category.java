@@ -1,5 +1,6 @@
-package com.tothenew.ecommerceapp.entities.product;
+package com.tothenew.ecommerceapp.entities.category;
 
+import com.tothenew.ecommerceapp.entities.product.Product;
 import com.tothenew.ecommerceapp.entities.utils.AuditingInformation;
 
 import javax.persistence.*;
@@ -15,15 +16,18 @@ public class Category {
     @Column(unique = true,nullable = false)
     private String name;
 
+    @Embedded
+    private AuditingInformation auditingInformation;
+
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id",referencedColumnName = "id",nullable = true)
     private Category parentId;
 
-    @Embedded
-    private AuditingInformation auditingInformation;
-
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Product> products;
+
+    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private Set<CategoryMetadataFieldValues> categoryMetadataFieldValues;
 
     public Long getId() {
         return id;
@@ -63,5 +67,13 @@ public class Category {
 
     public void setProducts(Set<Product> products) {
         this.products = products;
+    }
+
+    public Set<CategoryMetadataFieldValues> getCategoryMetadataFieldValues() {
+        return categoryMetadataFieldValues;
+    }
+
+    public void setCategoryMetadataFieldValues(Set<CategoryMetadataFieldValues> categoryMetadataFieldValues) {
+        this.categoryMetadataFieldValues = categoryMetadataFieldValues;
     }
 }

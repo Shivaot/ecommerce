@@ -14,6 +14,7 @@ public class ProductVariation {
     private Long price;
     private Long quantityAvailable;
     private String primaryImageName;
+    private Boolean isActive;
 
     @Convert(converter = HashMapConverter.class)
     private Map<String,Object> metadata;
@@ -68,5 +69,13 @@ public class ProductVariation {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 }

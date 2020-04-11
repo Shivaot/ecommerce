@@ -31,6 +31,11 @@ public class AuthenticationEventListener {
     public void authenticationFailed(AuthenticationFailureBadCredentialsEvent event) {
         int counter;
         String userEmail = (String) event.getAuthentication().getPrincipal();
+        if ("access-token".contentEquals(userEmail)) {
+            System.out.println("invalid access token");
+            return;
+        }
+        System.out.println(userEmail+"----");
         Optional<UserLoginFailCounter> userLoginFailCounter = userLoginFailCounterRepo.findByEmail(userEmail);
 
         if (!userLoginFailCounter.isPresent()) {

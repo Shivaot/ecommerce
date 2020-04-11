@@ -1,5 +1,6 @@
 package com.tothenew.ecommerceapp.entities.product;
 
+import com.tothenew.ecommerceapp.entities.category.Category;
 import com.tothenew.ecommerceapp.entities.users.Seller;
 import com.tothenew.ecommerceapp.entities.utils.AuditingInformation;
 
@@ -16,7 +17,7 @@ public class Product {
     private String description;
     private Boolean isCancellable;
     private Boolean isReturnable;
-    private Boolean brand;
+    private String brand;
     private Boolean isActive;
 
     @Embedded
@@ -76,11 +77,11 @@ public class Product {
         isReturnable = returnable;
     }
 
-    public Boolean getBrand() {
+    public String getBrand() {
         return brand;
     }
 
-    public void setBrand(Boolean brand) {
+    public void setBrand(String brand) {
         this.brand = brand;
     }
 

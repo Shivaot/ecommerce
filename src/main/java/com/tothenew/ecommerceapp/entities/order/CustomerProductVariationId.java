@@ -1,4 +1,4 @@
-package com.tothenew.ecommerceapp.entities.product;
+package com.tothenew.ecommerceapp.entities.order;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -6,12 +6,12 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class CustomerProductReviewId implements Serializable {
+public class CustomerProductVariationId implements Serializable {
 
     @Column(name = "customer_user_id")
     private Long customerUserId;
-    @Column(name = "product_id")
-    private Long productId;
+    @Column(name = "product_variation_id")
+    private Long productVariationId;
 
     public Long getCustomerUserId() {
         return customerUserId;
@@ -21,25 +21,25 @@ public class CustomerProductReviewId implements Serializable {
         this.customerUserId = customerUserId;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Long getProductVariationId() {
+        return productVariationId;
     }
 
-    public void setProductId(Long productId) {
-        this.productId = productId;
+    public void setProductVariationId(Long productVariationId) {
+        this.productVariationId = productVariationId;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CustomerProductReviewId that = (CustomerProductReviewId) o;
+        CustomerProductVariationId that = (CustomerProductVariationId) o;
         return Objects.equals(customerUserId, that.customerUserId) &&
-                Objects.equals(productId, that.productId);
+                Objects.equals(productVariationId, that.productVariationId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(customerUserId, productId);
+        return Objects.hash(customerUserId, productVariationId);
     }
 }
