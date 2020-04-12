@@ -5,26 +5,19 @@ import javax.persistence.*;
 @Entity
 public class CategoryMetadataFieldValues {
 
-    @EmbeddedId
-    private CategoryMedataFieldCompositeId categoryMedataFieldCompositeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "category_id",updatable = false,insertable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToOne
-    @JoinColumn(name = "category_metadata_field_id",updatable = false,insertable = false)
+    @JoinColumn(name = "category_metadata_field_id")
     private CategoryMetadataField categoryMetadataField;
 
     private String value;
-
-    public CategoryMedataFieldCompositeId getCategoryMedataFieldCompositeId() {
-        return categoryMedataFieldCompositeId;
-    }
-
-    public void setId(CategoryMedataFieldCompositeId categoryMedataFieldCompositeId) {
-        this.categoryMedataFieldCompositeId = categoryMedataFieldCompositeId;
-    }
 
     public Category getCategory() {
         return category;
@@ -49,4 +42,5 @@ public class CategoryMetadataFieldValues {
     public void setValue(String values) {
         this.value = values;
     }
+
 }

@@ -76,4 +76,16 @@ public class Category {
     public void setCategoryMetadataFieldValues(Set<CategoryMetadataFieldValues> categoryMetadataFieldValues) {
         this.categoryMetadataFieldValues = categoryMetadataFieldValues;
     }
+
+    @Override
+    public String toString() {
+        return "Category{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", auditingInformation=" + auditingInformation +
+                ", parentId=" + parentId +
+                ", products=" + products +
+                ", categoryMetadataFieldValues=" + categoryMetadataFieldValues +
+                '}';
+    }
 }

@@ -6,7 +6,7 @@ import com.tothenew.ecommerceapp.entities.users.Address;
 import com.tothenew.ecommerceapp.entities.users.Customer;
 import com.tothenew.ecommerceapp.exceptions.ContactInvalidException;
 import com.tothenew.ecommerceapp.exceptions.InvalidPasswordException;
-import com.tothenew.ecommerceapp.exceptions.UserNotFoundException;
+import com.tothenew.ecommerceapp.exceptions.ResourceNotFoundException;
 import com.tothenew.ecommerceapp.repositories.AddressRepo;
 import com.tothenew.ecommerceapp.repositories.CustomerRepo;
 import com.tothenew.ecommerceapp.utils.SendEmail;
@@ -119,7 +119,7 @@ public class CustomerProfileService {
     public String deleteAddress(Long id,HttpServletRequest request) {
         Optional<Address> address = addressRepo.findById(id);
         if (!address.isPresent()) {
-            throw  new UserNotFoundException("no address fount with id " + id);
+            throw  new ResourceNotFoundException("no address fount with id " + id);
         }
         addressRepo.deleteById(id);
         return "Success";
@@ -128,7 +128,7 @@ public class CustomerProfileService {
     public String updateAddress(Long id,AddressDTO addressDTO,HttpServletRequest request) {
         Optional<Address> address = addressRepo.findById(id);
         if (!address.isPresent()) {
-            throw  new UserNotFoundException("no address fount with id " + id);
+            throw  new ResourceNotFoundException("no address fount with id " + id);
         }
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         Set<Address> addresses = customer.getAddresses();

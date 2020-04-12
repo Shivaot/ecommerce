@@ -7,7 +7,7 @@ import com.tothenew.ecommerceapp.entities.users.Seller;
 import com.tothenew.ecommerceapp.exceptions.ContactInvalidException;
 import com.tothenew.ecommerceapp.exceptions.InvalidGstException;
 import com.tothenew.ecommerceapp.exceptions.InvalidPasswordException;
-import com.tothenew.ecommerceapp.exceptions.UserNotFoundException;
+import com.tothenew.ecommerceapp.exceptions.ResourceNotFoundException;
 import com.tothenew.ecommerceapp.repositories.AddressRepo;
 import com.tothenew.ecommerceapp.repositories.SellerRepo;
 import com.tothenew.ecommerceapp.utils.SendEmail;
@@ -119,7 +119,7 @@ public class SellerProfileService {
     public String updateAddress(Long id, SellerAddressDTO addressDTO, HttpServletRequest request) {
         Optional<Address> address = addressRepo.findById(id);
         if (!address.isPresent()) {
-            throw  new UserNotFoundException("no address fount with id " + id);
+            throw  new ResourceNotFoundException("no address fount with id " + id);
         }
         Seller seller = sellerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         Set<Address> addresses = seller.getAddresses();
