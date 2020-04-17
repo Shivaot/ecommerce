@@ -8,8 +8,9 @@ import javax.persistence.*;
 @Entity
 public class Cart {
 
-    @EmbeddedId
-    private CustomerProductVariationId customerProductVariationId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     private Integer quantity;
     private Boolean isWishListItem;
@@ -22,12 +23,12 @@ public class Cart {
     @JoinColumn(name = "product_variation_id",updatable = false,insertable = false)
     private ProductVariation productVariation;
 
-    public CustomerProductVariationId getCustomerProductVariationId() {
-        return customerProductVariationId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCustomerProductVariationId(CustomerProductVariationId customerProductVariationId) {
-        this.customerProductVariationId = customerProductVariationId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Integer getQuantity() {

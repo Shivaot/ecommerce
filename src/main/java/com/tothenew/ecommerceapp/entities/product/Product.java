@@ -1,5 +1,6 @@
 package com.tothenew.ecommerceapp.entities.product;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tothenew.ecommerceapp.entities.category.Category;
 import com.tothenew.ecommerceapp.entities.users.Seller;
 import com.tothenew.ecommerceapp.entities.utils.AuditingInformation;
@@ -12,13 +13,14 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private java.lang.Long id;
     private String name;
     private String description;
     private Boolean isCancellable;
     private Boolean isReturnable;
     private String brand;
     private Boolean isActive;
+    private Boolean isDeleted;
 
     @Embedded
     private AuditingInformation auditingInformation;
@@ -37,11 +39,11 @@ public class Product {
     @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<ProductReview> productReviews;
 
-    public Long getId() {
+    public java.lang.Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(java.lang.Long id) {
         this.id = id;
     }
 
@@ -93,6 +95,7 @@ public class Product {
         isActive = active;
     }
 
+    @JsonIgnore
     public AuditingInformation getAuditingInformation() {
         return auditingInformation;
     }
@@ -109,6 +112,7 @@ public class Product {
         this.category = category;
     }
 
+    @JsonIgnore
     public Seller getSeller() {
         return seller;
     }
@@ -117,6 +121,7 @@ public class Product {
         this.seller = seller;
     }
 
+    @JsonIgnore
     public Set<ProductVariation> getProductVariations() {
         return productVariations;
     }
@@ -131,5 +136,13 @@ public class Product {
 
     public void setProductReviews(Set<ProductReview> productReviews) {
         this.productReviews = productReviews;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

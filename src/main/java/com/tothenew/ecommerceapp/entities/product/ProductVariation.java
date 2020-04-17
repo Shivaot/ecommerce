@@ -3,6 +3,7 @@ package com.tothenew.ecommerceapp.entities.product;
 import com.tothenew.ecommerceapp.entities.utils.HashMapConverter;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Map;
 
 @Entity
@@ -17,7 +18,7 @@ public class ProductVariation {
     private Boolean isActive;
 
     @Convert(converter = HashMapConverter.class)
-    private Map<String,Object> metadata;
+    private Map<String, HashSet<String>> metadata;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
@@ -55,11 +56,14 @@ public class ProductVariation {
         this.primaryImageName = primaryImageName;
     }
 
-    public Map<String, Object> getMetadata() {
+//    @JsonIgnore
+
+
+    public Map<String, HashSet<String>> getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(Map<String, Object> metadata) {
+    public void setMetadata(Map<String, HashSet<String>> metadata) {
         this.metadata = metadata;
     }
 

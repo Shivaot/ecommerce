@@ -11,10 +11,7 @@ import com.tothenew.ecommerceapp.repositories.CategoryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class CategoryMetadataService {
@@ -29,9 +26,7 @@ public class CategoryMetadataService {
     CategoryMetadataFieldValuesRepo valuesRepo;
 
     public String addCategoryMetadata(CategoryMetadataDTO categoryMetadataDTO) {
-        System.out.println(categoryMetadataDTO);
         Optional<Category> category = categoryRepo.findById(categoryMetadataDTO.getCategoryId());
-        System.out.println(category.get()+"-----------");
         if (!category.isPresent()) {
             throw new ResourceNotFoundException(categoryMetadataDTO.getCategoryId() + " category does not exist");
         }
@@ -50,9 +45,7 @@ public class CategoryMetadataService {
         });
         CategoryMetadataFieldValues fieldValues = new CategoryMetadataFieldValues();
         fieldValues.setCategory(category.get());
-        System.out.println(metadataIds);
         metadataIds.forEach(id->{
-            int count=0;
             Optional<CategoryMetadataField> metadata = metadataRepo.findById(Long.parseLong(id));
             fieldValues.setCategoryMetadataField(metadata.get());
             HashSet<String> values = filedIdValues.get(id);
@@ -60,14 +53,31 @@ public class CategoryMetadataService {
             fieldValues.setValue(value);
             metadata.get().getCategoryMetadataFieldValues().add(fieldValues);
             metadataRepo.save(metadata.get());
-            count++;
-            System.out.println(count+"__________________");
         });
-        category.get().getCategoryMetadataFieldValues().add(fieldValues);
+        return "Success";
+    }
 
-//        categoryRepo.save(category.get());
-//        valuesRepo.save(fieldValues);
-        System.out.println();
+    public String updateCategory(CategoryMetadataDTO categoryMetadataDTO) {
+        Optional<Category> category = categoryRepo.findById(categoryMetadataDTO.getCategoryId());
+        if (!category.isPresent()) {
+            throw new ResourceNotFoundException(categoryMetadataDTO.getCategoryId() + " category does not exist");
+        }
+        HashMap<String, HashSet<String>> filedIdValues = categoryMetadataDTO.getFiledIdValues();
+        Set<String> metadataIds = filedIdValues.keySet();
+        metadataIds.forEach(id->{
+            Optional<CategoryMetadataField> metadata = metadataRepo.findById(Long.parseLong(id));
+            if (!metadata.isPresent()) {
+                throw new ResourceNotFoundException(id + " metadata filed does not exist");
+            }
+            Optional<CategoryMetadataFieldValues> associationSet = valuesRepo.findByMetadataId(categoryMetadataDTO.getCategoryId(),Long.parseLong(id));
+            if (!associationSet.isPresent()) {
+                throw new ResourceNotFoundException("metadata filed is not associated with any category");
+            }
+            String value= String.join(",",categoryMetadataDTO.getFiledIdValues().get(id));
+            associationSet.get().setValue(value);
+            metadata.get().getCategoryMetadataFieldValues().add(associationSet.get());
+            metadataRepo.save(metadata.get());
+        });
         return "Success";
     }
 }

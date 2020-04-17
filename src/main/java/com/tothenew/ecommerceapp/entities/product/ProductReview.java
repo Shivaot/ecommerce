@@ -8,8 +8,9 @@ import javax.persistence.*;
 @Entity
 public class ProductReview {
 
-    @EmbeddedId
-    private CustomerProductReviewId customerProductReviewId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     private String review;
     private Integer rating;
@@ -25,12 +26,12 @@ public class ProductReview {
     @JoinColumn(name = "product_id",insertable = false,updatable = false)
     private Product product;
 
-    public CustomerProductReviewId getCustomerProductReviewId() {
-        return customerProductReviewId;
+    public Long getId() {
+        return id;
     }
 
-    public void setCustomerProductReviewId(CustomerProductReviewId customerProductReviewId) {
-        this.customerProductReviewId = customerProductReviewId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getReview() {

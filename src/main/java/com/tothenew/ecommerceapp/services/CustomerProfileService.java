@@ -12,13 +12,27 @@ import com.tothenew.ecommerceapp.repositories.CustomerRepo;
 import com.tothenew.ecommerceapp.utils.SendEmail;
 import com.tothenew.ecommerceapp.utils.UserEmailFromToken;
 import com.tothenew.ecommerceapp.utils.ValidPassword;
+import org.apache.commons.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Decoder;
+
+import javax.imageio.ImageIO;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -47,7 +61,12 @@ public class CustomerProfileService {
         return customer;
     }
 
-    public String updateCustomer(CustomerProfileDTO customerProfileDTO,HttpServletRequest request) {
+    public String updateCustomer(CustomerProfileDTO customerProfileDTO, HttpServletRequest request) {
+        Set<String> imageExtensionsAllowed = new HashSet<>();
+        imageExtensionsAllowed.add("jpg");
+        imageExtensionsAllowed.add("jpeg");
+        imageExtensionsAllowed.add("png");
+        imageExtensionsAllowed.add("bmp");
         if (!(customerProfileDTO.getContact() == null) && (customerProfileDTO.getContact().length()!=10)) {
             throw new ContactInvalidException("invalid contact");
         }
@@ -63,11 +82,51 @@ public class CustomerProfileService {
                 customer.setContact(customerProfileDTO.getContact());
             }
             if (!(customerProfileDTO.getImage() == null)) {
-                //to do -> check image format then update image
+                File fi;
+                File[] matchingFiles = new File[2];
+                try
+                {
+                    try {
+                        File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/users");
+                        matchingFiles = f.listFiles(new FilenameFilter() {
+                            public boolean accept(File dir, String name) {
+                                return name.startsWith(customer.getId().toString());
+                            }
+                        });
+                        fi = new File(matchingFiles[0].toString());
+                        Path fileToDeletePath = Paths.get(String.valueOf(fi));
+                        Files.delete(fileToDeletePath);
+                    } catch(Exception ex) {}
+
+                    String parts[] = customerProfileDTO.getImage().split(",");
+                    String imageName = parts[0];
+                    String fileExtensionArr[] = imageName.split("/");
+                    String fileExtension[] = fileExtensionArr[1].split(";");
+                    if (!imageExtensionsAllowed.contains(fileExtension[0])) {
+                        return fileExtension + " image format not allowed";
+                    }
+                    String imageString = parts[1];
+
+                    BufferedImage image = null;
+                    byte[] imageByte;
+
+                    BASE64Decoder decoder = new BASE64Decoder();
+                    imageByte = decoder.decodeBuffer(imageString);
+                    ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+                    image = ImageIO.read(bis);
+                    bis.close();
+                    String path = "/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/users/" + customer.getId();
+
+                    File outputFile = new File(path+"."+fileExtension[0]);
+                    ImageIO.write(image, fileExtension[0], outputFile);
+                }
+                catch(Exception e)
+                {
+                    return "error = "+e;
+                }
             }
         } catch (NullPointerException ex) {
         }
-
         customerRepo.save(customer);
         return "Success";
     }
@@ -82,11 +141,8 @@ public class CustomerProfileService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         customer.setPassword(passwordEncoder.encode(pass));
-
         customerRepo.save(customer);
-
         sendEmail.sendEmail("PASSWORD CHANGED","Your password changed",customer.getEmail());
-
         return "Success";
     }
 
@@ -146,4 +202,5 @@ public class CustomerProfileService {
         customerRepo.save(customer);
         return "Success";
     }
+
 }

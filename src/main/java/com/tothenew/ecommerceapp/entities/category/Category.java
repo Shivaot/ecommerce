@@ -1,5 +1,7 @@
 package com.tothenew.ecommerceapp.entities.category;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tothenew.ecommerceapp.dtos.CategoryDTO;
 import com.tothenew.ecommerceapp.entities.product.Product;
 import com.tothenew.ecommerceapp.entities.utils.AuditingInformation;
 
@@ -13,15 +15,18 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(unique = true,nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Embedded
     private AuditingInformation auditingInformation;
 
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "parent_id",referencedColumnName = "id",nullable = true)
+    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "parent_id")
     private Category parentId;
+
+    @OneToMany(mappedBy = "parentId",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private Set<Category> childrenCategories;
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private Set<Product> products;
@@ -53,6 +58,7 @@ public class Category {
         this.parentId = parentId;
     }
 
+    @JsonIgnore
     public AuditingInformation getAuditingInformation() {
         return auditingInformation;
     }
@@ -61,6 +67,7 @@ public class Category {
         this.auditingInformation = auditingInformation;
     }
 
+    @JsonIgnore
     public Set<Product> getProducts() {
         return products;
     }
@@ -69,12 +76,22 @@ public class Category {
         this.products = products;
     }
 
+    @JsonIgnore
     public Set<CategoryMetadataFieldValues> getCategoryMetadataFieldValues() {
         return categoryMetadataFieldValues;
     }
 
     public void setCategoryMetadataFieldValues(Set<CategoryMetadataFieldValues> categoryMetadataFieldValues) {
         this.categoryMetadataFieldValues = categoryMetadataFieldValues;
+    }
+
+    @JsonIgnore
+    public Set<Category> getChildrenCategories() {
+        return childrenCategories;
+    }
+
+    public void setChildrenCategories(Set<Category> childrenCategories) {
+        this.childrenCategories = childrenCategories;
     }
 
     @Override

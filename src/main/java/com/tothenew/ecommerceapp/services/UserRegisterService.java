@@ -1,6 +1,7 @@
 package com.tothenew.ecommerceapp.services;
 
 import com.tothenew.ecommerceapp.entities.users.*;
+import com.tothenew.ecommerceapp.entities.users.Seller;
 import com.tothenew.ecommerceapp.repositories.CustomerActivateRepo;
 import com.tothenew.ecommerceapp.repositories.SellerRepo;
 import com.tothenew.ecommerceapp.repositories.UserRepo;
@@ -29,12 +30,14 @@ public class UserRegisterService {
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    ValidEmail validEmail;
 
     public String registerCustomer(Customer customer) {
-//        boolean isValidEmail = validEmail.checkEmailValid(customer.getEmail());
-//        if (!isValidEmail) {
-//            return "email is not valid";
-//        }
+        boolean isValidEmail = validEmail.checkEmailValid(customer.getEmail());
+        if (!isValidEmail) {
+            return "email is not valid";
+        }
         User localCustomer = userRepo.findByEmail(customer.getEmail());
         try {
             if (localCustomer.getEmail().equals(customer.getEmail())) {
@@ -83,10 +86,10 @@ public class UserRegisterService {
         if (!isValidGst) {
             return "gst is not valid";
         }
-//        boolean isValidEmail = validEmail.checkEmailValid(seller.getEmail());
-//        if (!isValidEmail) {
-//            return "email is not valid";
-//        }
+        boolean isValidEmail = validEmail.checkEmailValid(seller.getEmail());
+        if (!isValidEmail) {
+            return "email is not valid";
+        }
         User localSeller = userRepo.findByEmail(seller.getEmail());
         try {
             if (localSeller.getEmail().equals(seller.getEmail())) {

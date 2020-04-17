@@ -14,15 +14,16 @@ public class UserDao {
     @Autowired
     UserRepo userRepository;
 
-    AppUser loadUserByUserEmail(String email) {
+    AppUser loadUserByUserEmail(String email)  {
         User user = userRepository.findByEmail(email);
-        System.out.println(user);
+        System.out.println(user+"===============");
         if (email != null) {
             List<GrantAuthorityImpl> authorities = new ArrayList<>();
+            System.out.println(user.getRoles());
             user.getRoles().forEach(role -> {
-                GrantAuthorityImpl grantAuthority = new GrantAuthorityImpl(role.getAuthority());
-                authorities.add(grantAuthority);
-            });
+                    GrantAuthorityImpl grantAuthority = new GrantAuthorityImpl(role.getAuthority());
+                    authorities.add(grantAuthority);
+                });
             return new AppUser(user.getFirstName(), user.getPassword(), authorities,user.isActive(),!user.isLocked(),!user.isPasswordExpired());
         } else {
             throw new RuntimeException();

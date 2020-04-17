@@ -37,7 +37,7 @@ public class AdminController {
     SendEmail sendEmail;
 
     @PatchMapping("admin/activate/customer/{id}")
-    public String activateCustomer(@PathVariable Long id, HttpServletResponse httpServletResponse) {
+    public String activateCustomer(@PathVariable java.lang.Long id, HttpServletResponse httpServletResponse) {
         Optional<User> user = userRepo.findById(id);
         if (!user.isPresent()) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -56,7 +56,7 @@ public class AdminController {
     }
 
     @PatchMapping("admin/deactivate/customer/{id}")
-    public String deactivateCustomer(@PathVariable Long id, HttpServletResponse httpServletResponse) {
+    public String deactivateCustomer(@PathVariable java.lang.Long id, HttpServletResponse httpServletResponse) {
         Optional<User> user = userRepo.findById(id);
         if (!user.isPresent()) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -75,7 +75,7 @@ public class AdminController {
     }
 
     @PatchMapping("admin/activate/seller/{id}")
-    public String activateSeller(@PathVariable Long id, HttpServletResponse httpServletResponse) {
+    public String activateSeller(@PathVariable java.lang.Long id, HttpServletResponse httpServletResponse) {
         Optional<User> user = userRepo.findById(id);
         if (!user.isPresent()) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -94,7 +94,7 @@ public class AdminController {
     }
 
     @PatchMapping("admin/deactivate/seller/{id}")
-    public String deactivateSeller(@PathVariable Long id, HttpServletResponse httpServletResponse) {
+    public String deactivateSeller(@PathVariable java.lang.Long id, HttpServletResponse httpServletResponse) {
         Optional<User> user = userRepo.findById(id);
         if (!user.isPresent()) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);

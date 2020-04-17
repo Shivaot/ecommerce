@@ -2,6 +2,7 @@ package com.tothenew.ecommerceapp;
 
 import com.tothenew.ecommerceapp.entities.product.ProductVariation;
 import com.tothenew.ecommerceapp.entities.users.*;
+import com.tothenew.ecommerceapp.entities.users.Seller;
 import com.tothenew.ecommerceapp.repositories.ProductVariationRepo;
 import com.tothenew.ecommerceapp.repositories.UserRepo;
 import org.junit.jupiter.api.Test;
@@ -22,20 +23,20 @@ class EcommerceAppApplicationTests {
     @Autowired
     ProductVariationRepo productVariationRepo;
 
-    @Test
-    void testJsonMetadataInProductVariation() {
-        ProductVariation productVariation = new ProductVariation();
-        productVariation.setPrice(1000L);
-        productVariation.setPrimaryImageName("some iamge path");
-        productVariation.setQuantityAvailable(100L);
-        Map<String,Object> map = new HashMap<>();
-        map.put("ram","16gb");
-        map.put("battery","4000mah");
-        productVariation.setMetadata(map);
-
-
-        productVariationRepo.save(productVariation);
-    }
+//    @Test
+//    void testJsonMetadataInProductVariation() {
+//        ProductVariation productVariation = new ProductVariation();
+//        productVariation.setPrice(1000L);
+//        productVariation.setPrimaryImageName("some iamge path");
+//        productVariation.setQuantityAvailable(100L);
+//        Map<String,Object> map = new HashMap<>();
+//        map.put("ram","16gb");
+//        map.put("battery","4000mah");
+//        productVariation.setMetadata(map);
+//
+//
+//        productVariationRepo.save(productVariation);
+//    }
 
 
     @Test

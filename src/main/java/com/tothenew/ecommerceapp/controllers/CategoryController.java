@@ -1,11 +1,14 @@
 package com.tothenew.ecommerceapp.controllers;
 
+import com.tothenew.ecommerceapp.dtos.CategoryDTO;
 import com.tothenew.ecommerceapp.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/category")
@@ -46,4 +49,15 @@ public class CategoryController {
         }
         return getMessage;
     }
+
+    @GetMapping("{id}")
+    public CategoryDTO viewCategory(@PathVariable Long id){
+        return categoryService.viewCategory(id);
+    }
+
+    @GetMapping("/all")
+    public List<CategoryDTO> viewCategories(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(defaultValue = "ASC") String order,@RequestParam Optional<String> query) {
+       return categoryService.viewCategories(page,size,SortBy,order,query);
+    }
+
 }

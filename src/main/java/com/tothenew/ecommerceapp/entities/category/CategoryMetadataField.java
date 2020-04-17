@@ -1,5 +1,7 @@
 package com.tothenew.ecommerceapp.entities.category;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -31,6 +33,7 @@ public class CategoryMetadataField {
         this.name = name;
     }
 
+    @JsonIgnore
     public Set<CategoryMetadataFieldValues> getCategoryMetadataFieldValues() {
         return categoryMetadataFieldValues;
     }

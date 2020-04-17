@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Pattern;
 import java.util.Date;
 import java.util.Set;
+import java.lang.Long;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -19,7 +20,7 @@ public class User {
     private String firstName;
     private String middleName;
     private String lastName;
-    @Pattern(regexp = "[a-zA-Z][a-zA-Z0-9_.]*@[a-zA-Z]+[.][a-zA-Z]+", message = "Invalid Email Format")
+//    @Pattern(regexp = "[a-zA-Z][a-zA-Z0-9_.]*@[a-zA-Z]+[.][a-zA-Z]+", message = "Invalid Email Format")
     private String email;
     private String password;
     private boolean isActive;
