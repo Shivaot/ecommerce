@@ -29,6 +29,7 @@ public class MetadataService {
 
     public List<CategoryMetadataField> viewMetadata(String page, String size, String sortBy, String order, Optional<String> query) {
         if (query.isPresent()) {
+            // not null validation
             List<CategoryMetadataField> categoryMetadataFields = new ArrayList<>();
             categoryMetadataFields.add(metadataRepo.findById(Long.parseLong(query.get())).get());
             return categoryMetadataFields;

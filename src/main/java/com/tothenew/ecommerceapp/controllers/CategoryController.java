@@ -51,7 +51,7 @@ public class CategoryController {
     }
 
     @GetMapping("{id}")
-    public CategoryDTO viewCategory(@PathVariable Long id){
+    public CategoryDTO viewCategory(@PathVariable Long id) {
         return categoryService.viewCategory(id);
     }
 

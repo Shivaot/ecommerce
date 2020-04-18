@@ -52,6 +52,12 @@ public class ProductVariationService {
                     return "quantity should be 0 or more";
                 }
             }
+            try {
+                if (productVariationDTO.getFiledIdValues() == null) {
+                    return "there should be atleast one metadata and value";
+                }
+            } catch (Exception ex) {}
+
             if (productVariationDTO.getPrice() != null) {
                 if (productVariationDTO.getPrice() <= 0) {
                     return "price should be 0 or more";
@@ -187,12 +193,10 @@ public class ProductVariationService {
         if (productVariation.get().getProduct().getSeller().getId() != seller.getId()) {
             throw new ResourceNotFoundException("invalid seller");
         }
-        try {
-            if (productVariation.get().getProduct().getDeleted()) {
-                throw new ResourceNotFoundException(id + " product is deleted");
-            }
-        } catch (Exception ex) {
+        if (productRepo.getDeletedStatus(productVariation.get().getProduct().getId())) {
+            throw new ResourceNotFoundException(id + " product is deleted");
         }
+
         return productVariation.get();
     }
 
@@ -213,11 +217,8 @@ public class ProductVariationService {
         if (product.get().getSeller().getId() != seller.getId()) {
             throw new ResourceNotFoundException("invalid seller");
         }
-        try {
-            if (product.get().getDeleted()) {
+        if (product.get().getDeleted()) {
                 throw new ResourceNotFoundException("deleted product");
-            }
-        } catch (Exception ex) {
         }
         List<ProductVariation> productVariations = variationRepo.getAll(productId, PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(Sort.Direction.fromString(order), sortBy)));
         return productVariations;
@@ -233,12 +234,6 @@ public class ProductVariationService {
         Seller seller = sellerRepo.findByEmail(sellerEmail);
         if (productVariation.get().getProduct().getSeller().getId() != seller.getId()) {
             throw new ResourceNotFoundException("invalid seller");
-        }
-        try {
-            if (productVariation.get().getProduct().getDeleted()) {
-                throw new ResourceNotFoundException(productVariationDTO.getProductId() + " product is deleted");
-            }
-        } catch (Exception ex) {
         }
         if (productVariation.get().getProduct().getDeleted()) {
             throw new ResourceNotFoundException("deleted product");

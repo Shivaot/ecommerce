@@ -65,7 +65,7 @@ public class CategoryService {
         }
         if (!parentId.isPresent()) {
             if (categoryRepo.findByName(name) != null) {
-            throw new FieldAlreadyExistException(name + " category already exist");
+                throw new FieldAlreadyExistException(name + " category already exist");
             }
             category.setName(name);
             categoryRepo.save(category);
@@ -243,7 +243,6 @@ public class CategoryService {
         }
         return filterCategoryDTO;
     }
-
 
      private List<String> getCategoryNameTillRoot(Category category){
         List<String> categoryNameTillRoot = new ArrayList<>();

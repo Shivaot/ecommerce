@@ -109,11 +109,9 @@ public class ProductService {
         if (product.get().getSeller().getId() != seller.getId()) {
             throw new  ResourceNotFoundException("invalid seller");
         }
-        try {
-            if (product.get().getDeleted()) {
-                throw new ResourceNotFoundException(id+" product is deleted");
-            }
-        } catch (Exception ex) {}
+        if (product.get().getDeleted()) {
+            throw new ResourceNotFoundException(id+" product is deleted");
+        }
 
         ProductDTO productDTO = new ProductDTO();
         productDTO.setActive(product.get().getActive());
@@ -193,12 +191,9 @@ public class ProductService {
         if (!product.isPresent()) {
             throw new ResourceNotFoundException(productId+" product not found");
         }
-        try {
-            if (product.get().getDeleted()) {
-                throw new ResourceNotFoundException(productId+" product is deleted");
-            }
-        } catch (Exception ex) {}
-
+        if (product.get().getDeleted()) {
+            throw new ResourceNotFoundException(productId+" product is deleted");
+        }
         if (!product.get().getActive()) {
             throw new ResourceNotFoundException(productId+" product is inactive");
         }

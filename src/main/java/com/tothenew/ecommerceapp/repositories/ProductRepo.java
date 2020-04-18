@@ -36,5 +36,7 @@ public interface ProductRepo extends CrudRepository<Product,Long> {
     @Query(value = "select brand from product where category_id=:id",nativeQuery = true)
     List<String> getBrandsOfCategory(@Param("id") Long id);
 
+    @Query(value = "select is_deleted from product where id=:id",nativeQuery = true)
+    Boolean getDeletedStatus(@Param("id") Long id);
 
 }
