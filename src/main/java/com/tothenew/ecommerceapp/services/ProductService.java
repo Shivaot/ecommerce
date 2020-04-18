@@ -345,7 +345,16 @@ public class ProductService {
 
     public CustomerAllProductByCategoryDTO viewAllProductsAdmin(String page, String size, String sortBy, String order, Optional<Long> query) {
         if (query.isPresent()) {
-            return viewAllProductsOfCategory(query.get(),page,size,sortBy,order);
+            if (categoryRepo.findById(query.get()).isPresent()) {
+                return viewAllProductsOfCategory(query.get(),page,size,sortBy,order);
+            }
+            if (sellerRepo.findById(query.get()).isPresent()) {
+                List<Product> products = productRepo.productsOfSeller(query.get(),PageRequest.of(Integer.parseInt(page),Integer.parseInt(size),Sort.by(Sort.Direction.fromString(order),sortBy)));
+                CustomerAllProductByCategoryDTO customerAllProductByCategoryDTO = new CustomerAllProductByCategoryDTO();
+                customerAllProductByCategoryDTO.setProducts(products);
+                customerAllProductByCategoryDTO.setImage("no images found");
+                return customerAllProductByCategoryDTO;
+            }
         }
         List<Product> products = productRepo.getAllProductsNonDeletedActive(PageRequest.of(Integer.parseInt(page),Integer.parseInt(size),Sort.by(Sort.Direction.fromString(order),sortBy)));
         CustomerAllProductByCategoryDTO customerAllProductByCategoryDTO = new CustomerAllProductByCategoryDTO();
