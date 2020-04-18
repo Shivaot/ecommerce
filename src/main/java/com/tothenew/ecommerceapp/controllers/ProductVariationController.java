@@ -1,6 +1,5 @@
 package com.tothenew.ecommerceapp.controllers;
 
-import com.tothenew.ecommerceapp.dtos.ProductDTO;
 import com.tothenew.ecommerceapp.dtos.ProductVariationDTO;
 import com.tothenew.ecommerceapp.entities.product.ProductVariation;
 import com.tothenew.ecommerceapp.services.ProductVariationService;
