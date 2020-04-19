@@ -1,6 +1,8 @@
 package com.tothenew.ecommerceapp.controllers;
 
 import com.tothenew.ecommerceapp.services.ForgotPasswordService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -15,14 +17,14 @@ public class ForgotPassword {
 
     @Autowired
     private TokenStore tokenStore;
-
     @Autowired
     ForgotPasswordService forgotPasswordService;
+    Logger logger = LoggerFactory.getLogger(ForgotPassword.class);
 
     @PostMapping("/token/{email}")
     public String getToken(@PathVariable String email, HttpServletRequest request, HttpServletResponse httpServletResponse) {
         String getMessage = forgotPasswordService.sendToken(email);
-        System.out.println(getMessage);
+        logger.trace(getMessage);
         if (getMessage.equals("Success")) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null) {
@@ -45,7 +47,6 @@ public class ForgotPassword {
         } else {
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-
         return getMessage;
     }
 }

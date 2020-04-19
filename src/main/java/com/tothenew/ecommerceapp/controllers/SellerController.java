@@ -20,10 +20,8 @@ public class SellerController {
 
     @Autowired
     SellerProfileService sellerProfileService;
-
     @Autowired
     CategoryService categoryService;
-
     @Autowired
     private ModelMapper modelMapper;
 

@@ -18,13 +18,10 @@ public class CustomerActivateService {
 
     @Autowired
     ValidEmail validEmail;
-
     @Autowired
     CustomerActivateRepo customerActivateRepo;
-
     @Autowired
     UserRepo userRepo;
-
     @Autowired
     SendEmail sendEmail;
 
@@ -100,7 +97,6 @@ public class CustomerActivateService {
 
             return "Success";
         }
-
         return "Success";
     }
 }

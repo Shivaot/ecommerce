@@ -17,15 +17,12 @@ public class RegisterController {
 
     @Autowired
     UserRegisterService userRegisterService;
-
     @Autowired
     SendEmail sendEmail;
 
     @PostMapping("register/customer")
     String registerCustomer(@Valid @RequestBody Customer customer, HttpServletResponse httpServletResponse) {
-
         String getMessage = userRegisterService.registerCustomer(customer);
-        // use logger
         if ("Success".contentEquals(getMessage)) {
             httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
         } else {
@@ -45,6 +42,4 @@ public class RegisterController {
         }
         return getMessage;
     }
-
-
 }

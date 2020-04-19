@@ -18,10 +18,8 @@ public class CategoryMetadataService {
 
     @Autowired
     CategoryRepo categoryRepo;
-
     @Autowired
     CategoryMetadataFieldRepo metadataRepo;
-
     @Autowired
     CategoryMetadataFieldValuesRepo valuesRepo;
 

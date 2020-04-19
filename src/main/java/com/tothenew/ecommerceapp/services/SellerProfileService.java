@@ -42,19 +42,14 @@ public class SellerProfileService {
 
     @Autowired
     UserEmailFromToken userEmailFromToken;
-
     @Autowired
     SellerRepo sellerRepo;
-
     @Autowired
     ModelMapper modelMapper;
-
     @Autowired
     SendEmail sendEmail;
-
     @Autowired
     AddressRepo addressRepo;
-
     @Autowired
     ValidGst validGst;
 

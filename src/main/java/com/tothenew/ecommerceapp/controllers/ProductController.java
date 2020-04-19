@@ -29,7 +29,6 @@ public class ProductController {
     @Autowired
     private MessageSource messageSource;
 
-
     @ApiOperation(value = "add a product",response = String.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201,message = "Success"),
@@ -46,11 +45,21 @@ public class ProductController {
         return getMessage;
     }
 
+    @ApiOperation(value = "view a product",response = ProductDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,message = "Success"),
+            @ApiResponse(code=404,message = "invalid product Id")
+    })
     @GetMapping("/view/{id}")
     public ProductDTO viewProduct(@PathVariable Long id, HttpServletRequest request) {
         return productService.viewProduct(id,request);
     }
 
+    @ApiOperation(value = "view all products",response = List.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200,message = "Success"),
+            @ApiResponse(code=404,message = "invalid fields")
+    })
     @GetMapping("/view/all")
     public List<?> viewAllProduct(HttpServletRequest request, @RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(defaultValue = "ASC") String order, @RequestParam Optional<String> query) {
         return productService.viewAllProducts(request,page,size,SortBy,order,query);

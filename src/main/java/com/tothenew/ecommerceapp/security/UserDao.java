@@ -2,6 +2,8 @@ package com.tothenew.ecommerceapp.security;
 
 import com.tothenew.ecommerceapp.entities.users.User;
 import com.tothenew.ecommerceapp.repositories.UserRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,13 +15,14 @@ public class UserDao {
 
     @Autowired
     UserRepo userRepository;
+    Logger logger = LoggerFactory.getLogger(UserDao.class);
 
     AppUser loadUserByUserEmail(String email)  {
         User user = userRepository.findByEmail(email);
-        System.out.println(user+"===============");
+        logger.trace(user.toString());
         if (email != null) {
             List<GrantAuthorityImpl> authorities = new ArrayList<>();
-            System.out.println(user.getRoles());
+            logger.trace(user.getRoles().toString());
             user.getRoles().forEach(role -> {
                     GrantAuthorityImpl grantAuthority = new GrantAuthorityImpl(role.getAuthority());
                     authorities.add(grantAuthority);
@@ -28,6 +31,5 @@ public class UserDao {
         } else {
             throw new RuntimeException();
         }
-
     }
 }

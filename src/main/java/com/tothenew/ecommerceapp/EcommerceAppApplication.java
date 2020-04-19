@@ -40,6 +40,4 @@ public class EcommerceAppApplication {
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
-
-
 }

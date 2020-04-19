@@ -88,7 +88,6 @@ public class ProductVariationService {
             for (String s : arr) {
                 fieldValueDb.add(s.trim().replaceAll("\\s", ""));
             }
-
         });
         productVariationDTO.getFiledIdValues().forEach((k, v) -> {
             fieldValueReq.add(k.trim().replaceAll("\\s", ""));

@@ -23,9 +23,7 @@ public class UserEmailFromToken {
         LinkedHashMap<String,String> userMap = new LinkedHashMap<>();
         try {
             userMap = (LinkedHashMap<String, String>) authentication.getUserAuthentication().getDetails();
-        } catch (ClassCastException ex) {
-
-        }
+        } catch (ClassCastException ex) {}
         String userEmail = new String();
         try {
             userEmail = userMap.get("username");

@@ -29,10 +29,8 @@ public class CustomerController {
 
     @Autowired
     CustomerProfileService customerProfileService;
-
     @Autowired
     CategoryService categoryService;
-
     @Autowired
     private ModelMapper modelMapper;
 

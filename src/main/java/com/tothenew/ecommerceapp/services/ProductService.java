@@ -112,7 +112,6 @@ public class ProductService {
         if (product.get().getDeleted()) {
             throw new ResourceNotFoundException(id+" product is deleted");
         }
-
         ProductDTO productDTO = new ProductDTO();
         productDTO.setActive(product.get().getActive());
         productDTO.setBrand(product.get().getBrand());

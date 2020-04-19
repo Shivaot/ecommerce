@@ -12,6 +12,7 @@ public class ActivationController {
     @Autowired
     CustomerActivateService customerActivateService;
 
+
     @PutMapping("customer/activate/{token}")
     public String activateCustomer(@PathVariable String token, HttpServletResponse httpServletResponse) {
         String getMessage = customerActivateService.activateCustomer(token);

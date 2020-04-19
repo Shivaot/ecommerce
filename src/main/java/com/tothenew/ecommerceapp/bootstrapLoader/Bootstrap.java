@@ -3,6 +3,8 @@ package com.tothenew.ecommerceapp.bootstrapLoader;
 import com.tothenew.ecommerceapp.entities.users.Admin;
 import com.tothenew.ecommerceapp.entities.users.Role;
 import com.tothenew.ecommerceapp.repositories.UserRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -19,6 +21,7 @@ public class Bootstrap implements ApplicationRunner {
 
     @Autowired
     UserRepo userRepository;
+    Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -49,7 +52,7 @@ public class Bootstrap implements ApplicationRunner {
             shiva.setRoles(roleSet);
 
             userRepository.save(shiva);
-            System.out.println("Total users saved::"+userRepository.count());
+            logger.trace("Total users saved::" +userRepository.count());
         }
     }
 }

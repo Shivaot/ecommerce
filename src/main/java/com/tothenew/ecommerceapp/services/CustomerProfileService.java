@@ -12,27 +12,21 @@ import com.tothenew.ecommerceapp.repositories.CustomerRepo;
 import com.tothenew.ecommerceapp.utils.SendEmail;
 import com.tothenew.ecommerceapp.utils.UserEmailFromToken;
 import com.tothenew.ecommerceapp.utils.ValidPassword;
-import org.apache.commons.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 import sun.misc.BASE64Decoder;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -42,16 +36,12 @@ public class CustomerProfileService {
 
     @Autowired
     UserEmailFromToken userEmailFromToken;
-
     @Autowired
     CustomerRepo customerRepo;
-
     @Autowired
     ModelMapper modelMapper;
-
     @Autowired
     SendEmail sendEmail;
-
     @Autowired
     AddressRepo addressRepo;
 

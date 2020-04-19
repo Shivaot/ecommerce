@@ -11,6 +11,8 @@ import com.tothenew.ecommerceapp.repositories.CustomerRepo;
 import com.tothenew.ecommerceapp.repositories.SellerRepo;
 import com.tothenew.ecommerceapp.repositories.UserRepo;
 import com.tothenew.ecommerceapp.utils.SendEmail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,15 +28,14 @@ public class AdminController {
 
     @Autowired
     UserRepo userRepo;
-
     @Autowired
     CustomerRepo customerRepo;
-
     @Autowired
     SellerRepo sellerRepo;
-
     @Autowired
     SendEmail sendEmail;
+
+    Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     @PatchMapping("admin/activate/customer/{id}")
     public String activateCustomer(@PathVariable java.lang.Long id, HttpServletResponse httpServletResponse) {
@@ -51,7 +52,7 @@ public class AdminController {
             return "Success";
         }
         userRepo.save(user.get());
-        System.out.println("already activated");
+        logger.trace("already activated");
         return "Success";
     }
 
@@ -70,7 +71,7 @@ public class AdminController {
             return "Success";
         }
         userRepo.save(user.get());
-        System.out.println("already deactivated");
+        logger.trace("already deactivated");
         return "Success";
     }
 
@@ -89,7 +90,7 @@ public class AdminController {
             return "Success";
         }
         userRepo.save(user.get());
-        System.out.println("already activated");
+        logger.trace("already activated");
         return "Success";
     }
 
@@ -108,13 +109,14 @@ public class AdminController {
             return "Success";
         }
         userRepo.save(user.get());
-        System.out.println("already deactivated");
+        logger.trace("already deactivated");
         return "Success";
     }
 
 
     @GetMapping("/admin/customers")
     public MappingJacksonValue getCustomers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy) {
+        logger.trace("inside getCustomers");
         List<Customer> customerList = customerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy)));
         SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "middleName", "lastName", "email", "active");
         FilterProvider filters = new SimpleFilterProvider().addFilter("ignoreAddressInCustomer", filter);

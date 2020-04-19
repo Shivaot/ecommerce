@@ -9,6 +9,8 @@ import com.tothenew.ecommerceapp.repositories.CategoryMetadataFieldValuesRepo;
 import com.tothenew.ecommerceapp.repositories.CategoryRepo;
 import com.tothenew.ecommerceapp.repositories.ProductRepo;
 import com.tothenew.ecommerceapp.repositories.ProductVariationRepo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,15 +24,13 @@ public class CategoryService {
 
     @Autowired
     CategoryRepo categoryRepo;
-
     @Autowired
     ProductRepo productRepo;
-
     @Autowired
     CategoryMetadataFieldValuesRepo valuesRepo;
-
     @Autowired
     ProductVariationRepo productVariationRepo;
+    Logger logger = LoggerFactory.getLogger(CategoryService.class);
 
     public String addCategory(String name, Optional<Long> parentId) {
         Category category = new Category();
@@ -45,7 +45,7 @@ public class CategoryService {
                 }
             });
             List<Optional<Category>> immediateChildren = categoryRepo.findByParentId(parentId.get());
-            System.out.println(immediateChildren);
+            logger.trace(immediateChildren.toString());
             if (!immediateChildren.isEmpty()) {
                 immediateChildren.forEach(ic->{
                     if (ic.get().getName().equals(name)) {

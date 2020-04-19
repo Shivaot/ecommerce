@@ -1,6 +1,5 @@
 package com.tothenew.ecommerceapp.services;
 
-import com.tothenew.ecommerceapp.entities.category.Category;
 import com.tothenew.ecommerceapp.entities.category.CategoryMetadataField;
 import com.tothenew.ecommerceapp.exceptions.FieldAlreadyExistException;
 import com.tothenew.ecommerceapp.repositories.CategoryMetadataFieldRepo;

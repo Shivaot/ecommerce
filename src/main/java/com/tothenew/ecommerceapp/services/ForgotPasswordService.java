@@ -21,16 +21,12 @@ public class ForgotPasswordService {
 
     @Autowired
     ValidEmail validEmail;
-
     @Autowired
     UserRepo userRepo;
-
     @Autowired
     SendEmail sendEmail;
-
     @Autowired
     ForgotPasswordTokenRepo forgotPasswordTokenRepo;
-
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public String sendToken(String email) {
