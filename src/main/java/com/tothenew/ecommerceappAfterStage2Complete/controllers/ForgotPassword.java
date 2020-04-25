@@ -1,15 +1,20 @@
 package com.tothenew.ecommerceappAfterStage2Complete.controllers;
 
+import com.tothenew.ecommerceappAfterStage2Complete.dtos.ResponseDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.services.ForgotPasswordService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.Map;
 
 
 @RestController
@@ -21,32 +26,25 @@ public class ForgotPassword {
     ForgotPasswordService forgotPasswordService;
     Logger logger = LoggerFactory.getLogger(ForgotPassword.class);
 
-    @PostMapping("/token/{email}")
-    public String getToken(@PathVariable String email, HttpServletRequest request, HttpServletResponse httpServletResponse) {
-        String getMessage = forgotPasswordService.sendToken(email);
-        logger.trace(getMessage);
-        if (getMessage.equals("Success")) {
+    @PostMapping("/token")
+    public ResponseEntity<ResponseDTO> getToken(@RequestBody Map<String,String> email, HttpServletRequest request) {
+        if (forgotPasswordService.sendToken(email.get("email"))) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null) {
                 String tokenValue = authHeader.replace("Bearer", "").trim();
                 OAuth2AccessToken accessToken = tokenStore.readAccessToken(tokenValue);
                 tokenStore.removeAccessToken(accessToken);
             }
-            httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
-        } else {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseDTO("Success",new Date()), HttpStatus.OK);
         }
-        return getMessage;
+        return new ResponseEntity<>(new ResponseDTO("Bad Request",new Date()), HttpStatus.BAD_REQUEST);
     }
 
-    @PatchMapping("/resetPassword")
-    public String resetPassword(@RequestParam String email, @RequestParam String token, @RequestParam String pass, @RequestParam String cpass, HttpServletResponse httpServletResponse) {
-        String getMessage = forgotPasswordService.resetPassword(email, token, pass, cpass);
-        if (getMessage.equals("Success")) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
-        } else {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    @PutMapping("/resetPassword")
+    public ResponseEntity<ResponseDTO> resetPassword(@RequestBody Map<String,String> resetPass) {
+        if (forgotPasswordService.resetPassword(resetPass.get("token"), resetPass.get("pass"), resetPass.get("cpass"))) {
+            return new ResponseEntity<>(new ResponseDTO("Success",new Date()),HttpStatus.OK);
         }
-        return getMessage;
+        return new ResponseEntity<>(new ResponseDTO("Bad Request",new Date()), HttpStatus.BAD_REQUEST);
     }
 }

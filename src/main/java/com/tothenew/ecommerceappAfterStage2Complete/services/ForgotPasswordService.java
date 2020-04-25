@@ -2,6 +2,9 @@ package com.tothenew.ecommerceappAfterStage2Complete.services;
 
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.ForgotPasswordToken;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.User;
+import com.tothenew.ecommerceappAfterStage2Complete.exceptions.InvalidEmailException;
+import com.tothenew.ecommerceappAfterStage2Complete.exceptions.InvalidPasswordException;
+import com.tothenew.ecommerceappAfterStage2Complete.exceptions.ResourceNotFoundException;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.ForgotPasswordTokenRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
@@ -27,19 +30,19 @@ public class ForgotPasswordService {
     EmailSender emailSender;
     @Autowired
     ForgotPasswordTokenRepo forgotPasswordTokenRepo;
+
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public String sendToken(String email) {
-        boolean isValidEmail = emailValidator.isValid(email);
-        if (!isValidEmail) {
-            return "email is invalid";
+    public boolean sendToken(String email) {
+        if (!emailValidator.isValid(email)) {
+            throw new InvalidEmailException("email is invalid");
         }
         User user = userRepo.findByEmail(email);
-        try {
-            if (user.getEmail().equals(null)) {
-            }
-        } catch (NullPointerException ex) {
-            return "no email found";
+        if (user == null) {
+            throw new ResourceNotFoundException("no email found");
+        }
+        if (!user.isActive()) {
+            throw new ResourceNotFoundException("user is not active");
         }
 
         String token = UUID.randomUUID().toString();
@@ -53,42 +56,33 @@ public class ForgotPasswordService {
 
         emailSender.sendEmail("FORGOT PASSWORD", token, email);
 
-        return "Success";
+        return true;
     }
 
     @Transactional
-    public String resetPassword(String email, String token, String pass, String cpass) {
+    public boolean resetPassword(String token, String pass, String cpass) {
         if (!pass.equals(cpass)) {
-            return "password and confirm password not match";
+            throw new ResourceNotFoundException("password and confirm password not match");
         }
         if (!PasswordValidator.isValidPassword(pass)) {
-            return "in valid password syntax";
+            throw new InvalidPasswordException("invalid password syntax");
         }
-        ForgotPasswordToken forgotPasswordToken = forgotPasswordTokenRepo.findByUserEmail(email);
-        try {
-            if (forgotPasswordToken.getUserEmail().equals(null)) {
-            }
-        } catch (NullPointerException ex) {
-            return "no email found";
+        ForgotPasswordToken forgotPasswordToken = forgotPasswordTokenRepo.findByToken(token);
+        if (forgotPasswordToken == null) {
+            throw new ResourceNotFoundException("invalid token");
         }
         Date date = new Date();
         long diff = date.getTime() - forgotPasswordToken.getExpiryDate().getTime();
         long diffHours = diff / (60 * 60 * 1000);
         if (diffHours > 24) {
-            forgotPasswordTokenRepo.deleteByUserEmail(email);
-            return "Token has expired";
+            forgotPasswordTokenRepo.deleteByToken(token);
+            throw new ResourceNotFoundException("token has expired");
         }
-        if (!forgotPasswordToken.getToken().equals(token)) {
-            return "invalid token";
-        }
-        if (forgotPasswordToken.getToken().equals(token)) {
-            User user = userRepo.findByEmail(email);
-            user.setPassword(passwordEncoder.encode(pass));
-            userRepo.save(user);
-            forgotPasswordTokenRepo.deleteByUserEmail(email);
-            emailSender.sendEmail("PASSWORD CHANGED", "YOUR PASSWORD HAS BEEN CHANGED", email);
-            return "Success";
-        }
-        return "Success";
+        User user = userRepo.findByEmail(forgotPasswordToken.getUserEmail());
+        user.setPassword(passwordEncoder.encode(pass));
+        userRepo.save(user);
+        forgotPasswordTokenRepo.deleteByToken(token);
+        emailSender.sendEmail("PASSWORD CHANGED", "YOUR PASSWORD HAS BEEN CHANGED", forgotPasswordToken.getUserEmail());
+        return true;
     }
 }

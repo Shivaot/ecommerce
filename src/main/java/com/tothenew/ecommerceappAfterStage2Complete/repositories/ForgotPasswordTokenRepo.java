@@ -5,5 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface ForgotPasswordTokenRepo extends CrudRepository<ForgotPasswordToken,Long> {
     ForgotPasswordToken findByUserEmail(String email);
-    void deleteByUserEmail(String email);
+    ForgotPasswordToken findByToken(String token);
+    void deleteByToken(String token);
 }
