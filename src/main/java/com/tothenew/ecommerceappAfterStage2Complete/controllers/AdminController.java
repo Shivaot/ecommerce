@@ -4,12 +4,14 @@ package com.tothenew.ecommerceappAfterStage2Complete.controllers;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.tothenew.ecommerceappAfterStage2Complete.dtos.AdminCustomerDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Customer;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Seller;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.User;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.CustomerRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.SellerRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserRepo;
+import com.tothenew.ecommerceappAfterStage2Complete.services.AdminService;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,8 @@ public class AdminController {
     SellerRepo sellerRepo;
     @Autowired
     EmailSender emailSender;
+    @Autowired
+    AdminService adminService;
 
     Logger logger = LoggerFactory.getLogger(AdminController.class);
 
@@ -113,18 +117,11 @@ public class AdminController {
         return "Success";
     }
 
-
-    @GetMapping("/admin/customers")
-    public MappingJacksonValue getCustomers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy) {
-        logger.trace("inside getCustomers");
-        List<Customer> customerList = customerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy)));
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "middleName", "lastName", "email", "active");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("ignoreAddressInCustomer", filter);
-        MappingJacksonValue mapping = new MappingJacksonValue(customerList);
-        mapping.setFilters(filters);
-
-        return mapping;
+    @GetMapping("/customers")
+    public List<AdminCustomerDTO> getCustomers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(required = false) Optional<String> email) {
+        return adminService.getCustomers(page,size,SortBy,email);
     }
+
 
     @GetMapping("/admin/sellers")
     public MappingJacksonValue getSellers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy) {
