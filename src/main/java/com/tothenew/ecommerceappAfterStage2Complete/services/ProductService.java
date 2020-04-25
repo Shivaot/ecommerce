@@ -12,7 +12,7 @@ import com.tothenew.ecommerceappAfterStage2Complete.exceptions.ResourceNotFoundE
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.CategoryRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.ProductRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.SellerRepo;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.UserEmailFromToken;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
@@ -41,7 +41,7 @@ public class ProductService {
     @Autowired
     SellerRepo sellerRepo;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
     @Autowired
     ModelMapper modelMapper;
 
@@ -94,7 +94,7 @@ public class ProductService {
         sellerRepo.save(seller);
         Optional<Product> savedProduct = productRepo.checkUniqueProductName(brand,name,seller.getId(),categoryId);
         new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/"+savedProduct.get().getId()+"/variations").mkdirs();
-        sendEmail.sendEmail("ACTIVATE ADDED PRODUCT",name+" " +categoryId+" "+brand,"shiva@admin.com");
+        emailSender.sendEmail("ACTIVATE ADDED PRODUCT",name+" " +categoryId+" "+brand,"shiva@admin.com");
 
         return "Success";
     }
@@ -398,7 +398,7 @@ public class ProductService {
             throw new ResourceNotFoundException(productId+" already active");
         }
         product.get().setActive(true);
-        sendEmail.sendEmail("PRODUCT ACTIVATED",productId+" product activated",product.get().getSeller().getEmail());
+        emailSender.sendEmail("PRODUCT ACTIVATED",productId+" product activated",product.get().getSeller().getEmail());
         productRepo.save(product.get());
         return "Success";
     }
@@ -412,7 +412,7 @@ public class ProductService {
             throw new ResourceNotFoundException(productId+" already de-active");
         }
         product.get().setActive(false);
-        sendEmail.sendEmail("PRODUCT DE-ACTIVATED",productId+" product deactivated",product.get().getSeller().getEmail());
+        emailSender.sendEmail("PRODUCT DE-ACTIVATED",productId+" product deactivated",product.get().getSeller().getEmail());
         productRepo.save(product.get());
         return "Success";
     }

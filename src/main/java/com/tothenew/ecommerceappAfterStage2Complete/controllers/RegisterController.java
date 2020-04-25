@@ -4,10 +4,9 @@ import com.tothenew.ecommerceappAfterStage2Complete.dtos.ResponseDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Customer;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Seller;
 import com.tothenew.ecommerceappAfterStage2Complete.services.UserRegisterService;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,9 +22,9 @@ public class RegisterController {
     @Autowired
     UserRegisterService userRegisterService;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
 
-    @PostMapping(value = "customer/registration",produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping("customer/registration")
     ResponseEntity<ResponseDTO> registerCustomer(@Valid @RequestBody Customer customer) {
         if (userRegisterService.registerCustomer(customer)) {
             return new ResponseEntity<>(new ResponseDTO("Success",new Date()), HttpStatus.CREATED);
@@ -33,15 +32,12 @@ public class RegisterController {
         return new ResponseEntity<>(new ResponseDTO("Bad Request",new Date()),HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("register/seller")
-    String registerSeller(@Valid @RequestBody Seller seller, HttpServletResponse httpServletResponse) {
-        String getMessage = userRegisterService.registerSeller(seller);
-        if (getMessage.contentEquals("Success")) {
-            sendEmail.sendEmail("ACCOUNT CREATED", "Your account has been created waiting for approval", seller.getEmail());
-            httpServletResponse.setStatus(HttpServletResponse.SC_CREATED);
-        } else {
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    @PostMapping("seller/registration")
+    ResponseEntity<ResponseDTO> registerSeller(@Valid @RequestBody Seller seller, HttpServletResponse httpServletResponse) {
+        if (userRegisterService.registerSeller(seller)) {
+            emailSender.sendEmail("ACCOUNT CREATED", "Your account has been created waiting for approval", seller.getEmail());
+            return new ResponseEntity<>(new ResponseDTO("Success",new Date()),HttpStatus.CREATED);
         }
-        return getMessage;
+        return new ResponseEntity<>(new ResponseDTO("Bad Request",new Date()),HttpStatus.BAD_REQUEST);
     }
 }

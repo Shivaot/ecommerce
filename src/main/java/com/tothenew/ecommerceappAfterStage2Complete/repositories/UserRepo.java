@@ -9,7 +9,5 @@ import java.util.Optional;
 
 public interface UserRepo extends CrudRepository<User,Long> {
     User findByEmail(String email);
-    @Query(value = "select * from user where email=:email.",nativeQuery = true)
-    Optional<User> getUserByEmail(@Param("email") String email);
     Optional<User> findById(Long id);
 }

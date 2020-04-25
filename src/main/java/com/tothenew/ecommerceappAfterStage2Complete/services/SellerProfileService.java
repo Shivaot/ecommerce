@@ -10,9 +10,9 @@ import com.tothenew.ecommerceappAfterStage2Complete.exceptions.InvalidPasswordEx
 import com.tothenew.ecommerceappAfterStage2Complete.exceptions.ResourceNotFoundException;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.AddressRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.SellerRepo;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.UserEmailFromToken;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.ValidGst;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.GstValidator;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.PasswordValidator;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
@@ -47,11 +47,11 @@ public class SellerProfileService {
     @Autowired
     ModelMapper modelMapper;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
     @Autowired
     AddressRepo addressRepo;
     @Autowired
-    ValidGst validGst;
+    GstValidator gstValidator;
 
     public SellerProfileDTO viewProfile(HttpServletRequest request) throws IOException {
         String sellerEmail = userEmailFromToken.getUserEmail(request);
@@ -91,7 +91,7 @@ public class SellerProfileService {
         if ((sellerProfileDTO.getCompanyContact() != null) && sellerProfileDTO.getCompanyContact().length()!=10) {
             throw new ContactInvalidException("invalid contact");
         }
-        if ((sellerProfileDTO.getGst() != null) && (validGst.checkGstValid(sellerProfileDTO.getGst())!=true)) {
+        if ((sellerProfileDTO.getGst() != null) && (gstValidator.isValid(sellerProfileDTO.getGst())!=true)) {
             throw new InvalidGstException("gst format is invalid");
         }
         if (sellerProfileDTO.getGst()!=null) {
@@ -201,7 +201,7 @@ public class SellerProfileService {
 
         sellerRepo.save(seller);
 
-        sendEmail.sendEmail("PASSWORD CHANGED","Your password changed",seller.getEmail());
+        emailSender.sendEmail("PASSWORD CHANGED","Your password changed",seller.getEmail());
 
         return "Success";
     }

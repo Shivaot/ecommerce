@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SendEmail {
+public class EmailSender {
 
     @Autowired
     private EmailCfg emailCfg;

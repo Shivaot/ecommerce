@@ -10,7 +10,7 @@ import com.tothenew.ecommerceappAfterStage2Complete.entities.users.User;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.CustomerRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.SellerRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserRepo;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class AdminController {
     @Autowired
     SellerRepo sellerRepo;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
 
     Logger logger = LoggerFactory.getLogger(AdminController.class);
 
@@ -48,7 +48,7 @@ public class AdminController {
             user.get().setActive(true);
             userRepo.save(user.get());
             // trigger mail
-            sendEmail.sendEmail("ACTIVATED", "HEY CUSTOMER YOUR ACCOUNT HAS BEEN ACTIVATED", user.get().getEmail());
+            emailSender.sendEmail("ACTIVATED", "HEY CUSTOMER YOUR ACCOUNT HAS BEEN ACTIVATED", user.get().getEmail());
             return "Success";
         }
         userRepo.save(user.get());
@@ -67,7 +67,7 @@ public class AdminController {
             user.get().setActive(false);
             userRepo.save(user.get());
             // trigger mail
-            sendEmail.sendEmail("DEACTIVATED", "HEY CUSTOMER YOUR ACCOUNT HAS BEEN DEACTIVATED", user.get().getEmail());
+            emailSender.sendEmail("DEACTIVATED", "HEY CUSTOMER YOUR ACCOUNT HAS BEEN DEACTIVATED", user.get().getEmail());
             return "Success";
         }
         userRepo.save(user.get());
@@ -86,7 +86,7 @@ public class AdminController {
             user.get().setActive(true);
             userRepo.save(user.get());
             // trigger mail
-            sendEmail.sendEmail("ACTIVATED", "HEY SELLER YOUR ACCOUNT HAS BEEN ACTIVATED", user.get().getEmail());
+            emailSender.sendEmail("ACTIVATED", "HEY SELLER YOUR ACCOUNT HAS BEEN ACTIVATED", user.get().getEmail());
             return "Success";
         }
         userRepo.save(user.get());
@@ -105,7 +105,7 @@ public class AdminController {
             user.get().setActive(false);
             userRepo.save(user.get());
             // trigger mail
-            sendEmail.sendEmail("DEACTIVATED", "HEY SELLER YOUR ACCOUNT HAS BEEN DEACTIVATED", user.get().getEmail());
+            emailSender.sendEmail("DEACTIVATED", "HEY SELLER YOUR ACCOUNT HAS BEEN DEACTIVATED", user.get().getEmail());
             return "Success";
         }
         userRepo.save(user.get());

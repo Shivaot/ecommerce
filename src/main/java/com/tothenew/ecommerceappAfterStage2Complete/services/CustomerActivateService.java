@@ -7,13 +7,12 @@ import com.tothenew.ecommerceappAfterStage2Complete.exceptions.InvalidEmailExcep
 import com.tothenew.ecommerceappAfterStage2Complete.exceptions.ResourceNotFoundException;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.CustomerActivateRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserRepo;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -27,7 +26,7 @@ public class CustomerActivateService {
     @Autowired
     UserRepo userRepo;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
 
     @Transactional
     public Boolean activateCustomer(String token) {
@@ -51,7 +50,7 @@ public class CustomerActivateService {
 
             customerActivateRepo.save(localCustomerActivate);
 
-            sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/"+newToken, customerActivate.getUserEmail());
+            emailSender.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/"+newToken, customerActivate.getUserEmail());
 
             throw new ResourceNotFoundException("token has expired");
         }
@@ -59,7 +58,7 @@ public class CustomerActivateService {
             User user = userRepo.findByEmail(customerActivate.getUserEmail());
             user.setActive(true);
             userRepo.save(user);
-            sendEmail.sendEmail("ACCOUNT ACTIVATED", "Your account has been activated", customerActivate.getUserEmail());
+            emailSender.sendEmail("ACCOUNT ACTIVATED", "Your account has been activated", customerActivate.getUserEmail());
             customerActivateRepo.deleteByUserEmail(customerActivate.getUserEmail());
             return true;
         }
@@ -90,7 +89,7 @@ public class CustomerActivateService {
 
             customerActivateRepo.save(localCustomerActivate);
 
-            sendEmail.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/"+newToken, email);
+            emailSender.sendEmail("RE-ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/"+newToken, email);
 
             return true;
         }

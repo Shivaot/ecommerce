@@ -9,7 +9,7 @@ import com.tothenew.ecommerceappAfterStage2Complete.exceptions.InvalidPasswordEx
 import com.tothenew.ecommerceappAfterStage2Complete.exceptions.ResourceNotFoundException;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.AddressRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.CustomerRepo;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.UserEmailFromToken;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.PasswordValidator;
 import org.modelmapper.ModelMapper;
@@ -41,7 +41,7 @@ public class CustomerProfileService {
     @Autowired
     ModelMapper modelMapper;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
     @Autowired
     AddressRepo addressRepo;
 
@@ -132,7 +132,7 @@ public class CustomerProfileService {
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         customer.setPassword(passwordEncoder.encode(pass));
         customerRepo.save(customer);
-        sendEmail.sendEmail("PASSWORD CHANGED","Your password changed",customer.getEmail());
+        emailSender.sendEmail("PASSWORD CHANGED","Your password changed",customer.getEmail());
         return "Success";
     }
 

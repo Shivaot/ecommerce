@@ -1,16 +1,13 @@
 package com.tothenew.ecommerceappAfterStage2Complete.services;
 
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.*;
-import com.tothenew.ecommerceappAfterStage2Complete.exceptions.FieldAlreadyExistException;
-import com.tothenew.ecommerceappAfterStage2Complete.exceptions.FormatInvalidException;
-import com.tothenew.ecommerceappAfterStage2Complete.exceptions.InvalidEmailException;
-import com.tothenew.ecommerceappAfterStage2Complete.exceptions.InvalidPasswordException;
+import com.tothenew.ecommerceappAfterStage2Complete.exceptions.*;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.CustomerActivateRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.SellerRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserRepo;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailValidator;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.ValidGst;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.GstValidator;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,11 +22,11 @@ public class UserRegisterService {
     @Autowired
     SellerRepo sellerRepo;
     @Autowired
-    ValidGst validGst;
+    GstValidator gstValidator;
     @Autowired
     CustomerActivateRepo customerActivateRepo;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
     UserRepo userRepo;
@@ -71,59 +68,34 @@ public class UserRegisterService {
 
         customerActivateRepo.save(customerActivate);
 
-        sendEmail.sendEmail("ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/" + token, customer.getEmail());
+        emailSender.sendEmail("ACCOUNT ACTIVATE TOKEN", "http://localhost:8080/customer/activate/" + token, customer.getEmail());
 
         return true;
     }
 
-    public String registerSeller(Seller seller) {
-        boolean isValidGst = validGst.checkGstValid(seller.getGst());
-        if (!isValidGst) {
-            return "gst is not valid";
+    public boolean registerSeller(Seller seller) {
+        if (!gstValidator.isValid(seller.getGst())) {
+            throw new InvalidGstException("gst is invalid");
         }
-        boolean isValidEmail = emailValidator.isValid(seller.getEmail());
-        if (!isValidEmail) {
-            return "email is not valid";
+        if (!emailValidator.isValid(seller.getEmail())) {
+            throw new InvalidEmailException("email is invalid");
         }
-        User localSeller = userRepo.findByEmail(seller.getEmail());
-        try {
-            if (localSeller.getEmail().equals(seller.getEmail())) {
-                return "Email already exists";
-            }
-        } catch (NullPointerException ex) {
-//            ex.printStackTrace();
+        if (userRepo.findByEmail(seller.getEmail()) != null) {
+            throw new FieldAlreadyExistException("email already exist");
         }
-        Seller anotherLocalSeller = sellerRepo.findByCompanyName(seller.getCompanyName());
-        try {
-            if (anotherLocalSeller.getCompanyName().equalsIgnoreCase(seller.getCompanyName())) {
-                return "company name should be unique";
-            }
-        } catch (NullPointerException ex) {
-//            ex.printStackTrace();
+        if (sellerRepo.findByCompanyName(seller.getCompanyName()) != null) {
+            throw new FieldAlreadyExistException("company name should be unique");
         }
-        List<Seller> anotherLocalSeller1 = sellerRepo.findByGst(seller.getGst());
-        boolean flag = false;
-        for (Seller seller1 : anotherLocalSeller1) {
-            if (seller1.getGst().equals(seller.getGst())) {
-                flag = true;
-                break;
-            }
+        if (sellerRepo.getByGst(seller.getGst()) != null) {
+            throw new FieldAlreadyExistException("gst should be unique");
         }
-        try {
-            if (flag == true) {
-                return "gst should be unique";
-            }
-        } catch (NullPointerException ex) {
-//            ex.printStackTrace();
+        if (!PasswordValidator.isValidPassword(seller.getPassword())) {
+            throw new InvalidPasswordException("password in invalid");
         }
-        boolean isValidPassword = PasswordValidator.isValidPassword(seller.getPassword());
-        if (!isValidPassword) {
-            return "password is invalid";
+        if (seller.getCompanyContact().length() != 10) {
+            throw new FormatInvalidException("contact is invalid");
         }
         seller.setPassword(passwordEncoder.encode(seller.getPassword()));
-        if (seller.getCompanyContact().length() != 10) {
-            return "invalid contact";
-        }
         Role role = new Role();
         role.setAuthority("ROLE_SELLER");
         Set<Role> roleSet = new HashSet<>();
@@ -134,7 +106,6 @@ public class UserRegisterService {
         seller.setLocked(false);
         seller.setPasswordExpired(false);
 
-
         Set<Address> addresses = seller.getAddresses();
         addresses.forEach(address -> {
             Address addressSave = address;
@@ -143,7 +114,7 @@ public class UserRegisterService {
 
         userRepo.save(seller);
 
-        return "Success";
+        return true;
     }
 
 

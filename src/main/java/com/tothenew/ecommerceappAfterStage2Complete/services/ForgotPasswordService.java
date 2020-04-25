@@ -4,7 +4,7 @@ import com.tothenew.ecommerceappAfterStage2Complete.entities.users.ForgotPasswor
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.User;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.ForgotPasswordTokenRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserRepo;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailValidator;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.PasswordValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class ForgotPasswordService {
     @Autowired
     UserRepo userRepo;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
     @Autowired
     ForgotPasswordTokenRepo forgotPasswordTokenRepo;
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -51,7 +51,7 @@ public class ForgotPasswordService {
 
         forgotPasswordTokenRepo.save(forgotPasswordToken);
 
-        sendEmail.sendEmail("FORGOT PASSWORD", token, email);
+        emailSender.sendEmail("FORGOT PASSWORD", token, email);
 
         return "Success";
     }
@@ -86,7 +86,7 @@ public class ForgotPasswordService {
             user.setPassword(passwordEncoder.encode(pass));
             userRepo.save(user);
             forgotPasswordTokenRepo.deleteByUserEmail(email);
-            sendEmail.sendEmail("PASSWORD CHANGED", "YOUR PASSWORD HAS BEEN CHANGED", email);
+            emailSender.sendEmail("PASSWORD CHANGED", "YOUR PASSWORD HAS BEEN CHANGED", email);
             return "Success";
         }
         return "Success";

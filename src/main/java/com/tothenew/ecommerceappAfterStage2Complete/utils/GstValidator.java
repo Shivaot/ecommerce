@@ -3,8 +3,8 @@ package com.tothenew.ecommerceappAfterStage2Complete.utils;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ValidGst {
-    public boolean checkGstValid(String gst) {
+public class GstValidator {
+    public boolean isValid(String gst) {
        if (gst.length() != 15) {
            return false;
        }

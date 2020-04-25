@@ -4,7 +4,7 @@ import com.tothenew.ecommerceappAfterStage2Complete.entities.users.User;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.UserLoginFailCounter;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserLoginFailCounterRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserRepo;
-import com.tothenew.ecommerceappAfterStage2Complete.utils.SendEmail;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class AuthenticationEventListener {
     @Autowired
     UserRepo userRepo;
     @Autowired
-    SendEmail sendEmail;
+    EmailSender emailSender;
     Logger logger = LoggerFactory.getLogger(AuthenticationEventListener.class);
 
     @EventListener
@@ -50,7 +50,7 @@ public class AuthenticationEventListener {
             if (counter>=2) {
                 User user = userRepo.findByEmail(userEmail);
                 user.setLocked(true);
-                sendEmail.sendEmail("ACCOUNT LOCKED","YOUR ACCOUNT HAS BEEN LOCKED",userEmail);
+                emailSender.sendEmail("ACCOUNT LOCKED","YOUR ACCOUNT HAS BEEN LOCKED",userEmail);
                 userRepo.save(user);
             }
             UserLoginFailCounter userLoginFailCounter1 = userLoginFailCounter.get();
