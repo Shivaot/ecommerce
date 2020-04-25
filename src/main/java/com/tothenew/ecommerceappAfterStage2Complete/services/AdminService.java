@@ -4,9 +4,13 @@ import com.tothenew.ecommerceappAfterStage2Complete.dtos.AdminCustomerDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.AdminSellerDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Customer;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Seller;
+import com.tothenew.ecommerceappAfterStage2Complete.entities.users.User;
 import com.tothenew.ecommerceappAfterStage2Complete.exceptions.FieldAlreadyExistException;
+import com.tothenew.ecommerceappAfterStage2Complete.exceptions.ResourceNotFoundException;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.CustomerRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.SellerRepo;
+import com.tothenew.ecommerceappAfterStage2Complete.repositories.UserRepo;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,6 +27,10 @@ public class AdminService {
     CustomerRepo customerRepo;
     @Autowired
     SellerRepo sellerRepo;
+    @Autowired
+    UserRepo userRepo;
+    @Autowired
+    EmailSender emailSender;
 
     public List<AdminCustomerDTO> getCustomers(String page, String size, String sortBy, Optional<String> email) {
         List<AdminCustomerDTO> adminCustomerDTOS = new ArrayList<>();
@@ -82,5 +90,31 @@ public class AdminService {
             adminSellerDTOS.add(adminSellerDTO);
         });
         return adminSellerDTOS;
+    }
+
+    public void activateUser(Long id) {
+        Optional<User> user = userRepo.findById(id);
+        if (!user.isPresent()) {
+            throw new ResourceNotFoundException("id is invalid");
+        }
+        if (user.get().isActive()) {
+            throw new FieldAlreadyExistException("Success user is already activated");
+        }
+        user.get().setActive(true);
+        userRepo.save(user.get());
+        emailSender.sendEmail("ACTIVATED", "HEY USER YOUR ACCOUNT HAS BEEN ACTIVATED", user.get().getEmail());
+    }
+
+    public void deactivateUser(Long id) {
+        Optional<User> user = userRepo.findById(id);
+        if (!user.isPresent()) {
+            throw new ResourceNotFoundException("id is invalid");
+        }
+        if (!user.get().isActive()) {
+            throw new FieldAlreadyExistException("Success user is already deactivated");
+        }
+        user.get().setActive(false);
+        userRepo.save(user.get());
+        emailSender.sendEmail("DE-ACTIVATED", "HEY USER YOUR ACCOUNT HAS BEEN DE-ACTIVATED", user.get().getEmail());
     }
 }
