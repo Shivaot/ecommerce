@@ -9,7 +9,6 @@ import java.lang.Long;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonFilter("ignoreAddressInCustomer")
 public class User {
 
     @Id

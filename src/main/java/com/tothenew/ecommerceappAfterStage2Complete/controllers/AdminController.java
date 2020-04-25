@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.AdminCustomerDTO;
+import com.tothenew.ecommerceappAfterStage2Complete.dtos.AdminSellerDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Customer;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Seller;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.User;
@@ -122,15 +123,8 @@ public class AdminController {
         return adminService.getCustomers(page,size,SortBy,email);
     }
 
-
-    @GetMapping("/admin/sellers")
-    public MappingJacksonValue getSellers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy) {
-        List<Seller> sellerList = sellerRepo.findAll(PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(SortBy)));
-        SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "firstName", "middleName", "lastName", "email", "active", "companyName", "addresses", "companyContact");
-        FilterProvider filters = new SimpleFilterProvider().addFilter("ignoreAddressInCustomer", filter);
-        MappingJacksonValue mapping = new MappingJacksonValue(sellerList);
-        mapping.setFilters(filters);
-
-        return mapping;
+    @GetMapping("/sellers")
+    public List<AdminSellerDTO> getSellers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(required = false) Optional<String> email) {
+        return adminService.getSellers(page,size,SortBy,email);
     }
 }

@@ -1,5 +1,6 @@
 package com.tothenew.ecommerceappAfterStage2Complete.entities.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.product.Product;
 
 import javax.persistence.*;
@@ -40,6 +41,7 @@ public class Seller extends User {
         this.companyName = companyName;
     }
 
+    @JsonIgnore
     public Set<Product> getProducts() {
         return products;
     }
