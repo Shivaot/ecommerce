@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Date;
 
@@ -33,7 +32,7 @@ public class RegisterController {
     }
 
     @PostMapping("seller/registration")
-    ResponseEntity<ResponseDTO> registerSeller(@Valid @RequestBody Seller seller, HttpServletResponse httpServletResponse) {
+    ResponseEntity<ResponseDTO> registerSeller(@Valid @RequestBody Seller seller) {
         if (userRegisterService.registerSeller(seller)) {
             emailSender.sendEmail("ACCOUNT CREATED", "Your account has been created waiting for approval", seller.getEmail());
             return new ResponseEntity<>(new ResponseDTO("Success",new Date()),HttpStatus.CREATED);
