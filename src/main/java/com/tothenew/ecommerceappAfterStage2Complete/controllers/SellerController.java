@@ -1,18 +1,23 @@
 package com.tothenew.ecommerceappAfterStage2Complete.controllers;
 
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.CategoryDTO;
+import com.tothenew.ecommerceappAfterStage2Complete.dtos.ResponseDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.SellerAddressDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.SellerProfileDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.services.CategoryService;
 import com.tothenew.ecommerceappAfterStage2Complete.services.SellerProfileService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/seller/profile")
@@ -22,8 +27,6 @@ public class SellerController {
     SellerProfileService sellerProfileService;
     @Autowired
     CategoryService categoryService;
-    @Autowired
-    private ModelMapper modelMapper;
 
     @GetMapping("")
     public SellerProfileDTO viewProfile(HttpServletRequest request) throws IOException {
@@ -42,25 +45,19 @@ public class SellerController {
     }
 
     @PutMapping("/updatePassword")
-    public String updatePassword(@RequestParam String pass,@RequestParam String cPass,HttpServletRequest request,HttpServletResponse response) {
-        String getMessage = sellerProfileService.updatePassword(pass,cPass,request);
-        if ("Success".contentEquals(getMessage)) {
-            response.setStatus(HttpServletResponse.SC_CREATED);
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    public ResponseEntity<ResponseDTO> updatePassword(@RequestBody Map<String,String> body, HttpServletRequest request) {
+        if (sellerProfileService.updatePassword(body.get("pass"),body.get("cPass"),request)) {
+            return new ResponseEntity<>(new ResponseDTO("Success",new Date()), HttpStatus.CREATED);
         }
-        return getMessage;
+        return new ResponseEntity<>(new ResponseDTO("bad request",new Date()), HttpStatus.BAD_REQUEST);
     }
 
     @PutMapping("/updateAddress/{id}")
-    public String updateAddress(@PathVariable Long id, @RequestBody SellerAddressDTO sellerAddressDTO, HttpServletResponse response, HttpServletRequest request) {
-        String getMessage = sellerProfileService.updateAddress(id,sellerAddressDTO,request);
-        if ("Success".contentEquals(getMessage)) {
-            response.setStatus(HttpServletResponse.SC_CREATED);
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    public ResponseEntity<ResponseDTO> updateAddress(@PathVariable Long id, @RequestBody SellerAddressDTO sellerAddressDTO,HttpServletRequest request) {
+        if (sellerProfileService.updateAddress(id,sellerAddressDTO,request)) {
+            return new ResponseEntity<>(new ResponseDTO("Success",new Date()), HttpStatus.CREATED);
         }
-        return getMessage;
+        return new ResponseEntity<>(new ResponseDTO("bad request",new Date()), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/categories")

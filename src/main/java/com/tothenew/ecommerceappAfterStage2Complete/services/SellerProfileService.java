@@ -58,7 +58,7 @@ public class SellerProfileService {
         Seller seller = sellerRepo.findByEmail(sellerEmail);
         SellerProfileDTO sellerProfileDTO = modelMapper.map(seller,SellerProfileDTO.class);
         // check image format then set
-        File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/users");
+        File f = new File("/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users");
         File[] matchingFiles = new File[2];
         try {
             matchingFiles = f.listFiles(new FilenameFilter() {
@@ -144,7 +144,7 @@ public class SellerProfileService {
                 try
                 {
                     try {
-                        File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/users");
+                        File f = new File("/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users");
                             matchingFiles = f.listFiles(new FilenameFilter() {
                             public boolean accept(File dir, String name) {
                                 return name.startsWith(seller.getId().toString());
@@ -172,7 +172,7 @@ public class SellerProfileService {
                     ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                     image = ImageIO.read(bis);
                     bis.close();
-                    String path = "/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/users/" + seller.getId();
+                    String path = "/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users/" + seller.getId();
 
                     File outputFile = new File(path+"."+fileExtension[0]);
                     ImageIO.write(image, fileExtension[0], outputFile);
@@ -188,9 +188,9 @@ public class SellerProfileService {
         return "Success";
     }
 
-    public String updatePassword(String pass,String cPass,HttpServletRequest request) {
+    public boolean updatePassword(String pass,String cPass,HttpServletRequest request) {
         if (!pass.contentEquals(cPass)) {
-            return "Password and confirm password does not match";
+            throw new InvalidPasswordException("Password and confirm password does not match");
         }
         if (!PasswordValidator.isValidPassword(pass)) {
             throw new InvalidPasswordException("password format invalid");
@@ -203,10 +203,10 @@ public class SellerProfileService {
 
         emailSender.sendEmail("PASSWORD CHANGED","Your password changed",seller.getEmail());
 
-        return "Success";
+        return true;
     }
 
-    public String updateAddress(java.lang.Long id, SellerAddressDTO addressDTO, HttpServletRequest request) {
+    public boolean updateAddress(java.lang.Long id, SellerAddressDTO addressDTO, HttpServletRequest request) {
         Optional<Address> address = addressRepo.findById(id);
         if (!address.isPresent()) {
             throw  new ResourceNotFoundException("no address fount with id " + id);
@@ -224,6 +224,6 @@ public class SellerProfileService {
             }
         });
         sellerRepo.save(seller);
-        return "Success";
+        return true;
     }
 }
