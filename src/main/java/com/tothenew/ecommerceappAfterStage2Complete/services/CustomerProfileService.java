@@ -77,7 +77,7 @@ public class CustomerProfileService {
                 try
                 {
                     try {
-                        File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/users");
+                        File f = new File("/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users");
                         matchingFiles = f.listFiles(new FilenameFilter() {
                             public boolean accept(File dir, String name) {
                                 return name.startsWith(customer.getId().toString());
@@ -105,25 +105,25 @@ public class CustomerProfileService {
                     ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                     image = ImageIO.read(bis);
                     bis.close();
-                    String path = "/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/users/" + customer.getId();
+                    String path = "/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users/" + customer.getId();
 
                     File outputFile = new File(path+"."+fileExtension[0]);
                     ImageIO.write(image, fileExtension[0], outputFile);
                 }
-                catch(Exception e)
-                {
-                    return "error = "+e;
+                catch(Exception e) {
+                    System.out.println(e);
                 }
             }
         } catch (NullPointerException ex) {
+            System.out.println(ex);
         }
         customerRepo.save(customer);
         return "Success";
     }
 
-    public String updatePassword(String pass,String cPass,HttpServletRequest request) {
+    public boolean updatePassword(String pass,String cPass,HttpServletRequest request) {
         if (!pass.contentEquals(cPass)) {
-            return "Password and confirm password does not match";
+            throw new InvalidPasswordException("Password and confirm password does not match");
         }
         if (!PasswordValidator.isValidPassword(pass)) {
             throw new InvalidPasswordException("password format invalid");
@@ -133,10 +133,10 @@ public class CustomerProfileService {
         customer.setPassword(passwordEncoder.encode(pass));
         customerRepo.save(customer);
         emailSender.sendEmail("PASSWORD CHANGED","Your password changed",customer.getEmail());
-        return "Success";
+        return true;
     }
 
-    public String newAddress(AddressDTO addressDTO,HttpServletRequest request) {
+    public boolean newAddress(AddressDTO addressDTO,HttpServletRequest request) {
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         Address address = modelMapper.map(addressDTO,Address.class);
         Set<Address> addresses = customer.getAddresses();
@@ -147,7 +147,7 @@ public class CustomerProfileService {
             addressSave.setUser(customer);
         });
         customerRepo.save(customer);
-        return "Success";
+        return true;
     }
 
     public Set<AddressDTO> viewAddress(HttpServletRequest request) {
@@ -162,16 +162,16 @@ public class CustomerProfileService {
     }
 
     @Transactional
-    public String deleteAddress(Long id,HttpServletRequest request) {
+    public boolean deleteAddress(Long id) {
         Optional<Address> address = addressRepo.findById(id);
         if (!address.isPresent()) {
             throw  new ResourceNotFoundException("no address fount with id " + id);
         }
         addressRepo.deleteById(id);
-        return "Success";
+        return true;
     }
 
-    public String updateAddress(Long id,AddressDTO addressDTO,HttpServletRequest request) {
+    public boolean updateAddress(Long id,AddressDTO addressDTO,HttpServletRequest request) {
         Optional<Address> address = addressRepo.findById(id);
         if (!address.isPresent()) {
             throw  new ResourceNotFoundException("no address fount with id " + id);
@@ -190,7 +190,7 @@ public class CustomerProfileService {
             }
         });
         customerRepo.save(customer);
-        return "Success";
+        return true;
     }
 
 }

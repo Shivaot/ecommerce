@@ -4,7 +4,6 @@ import com.tothenew.ecommerceappAfterStage2Complete.entities.users.ForgotPasswor
 import org.springframework.data.repository.CrudRepository;
 
 public interface ForgotPasswordTokenRepo extends CrudRepository<ForgotPasswordToken,Long> {
-    ForgotPasswordToken findByUserEmail(String email);
     ForgotPasswordToken findByToken(String token);
     void deleteByToken(String token);
 }

@@ -51,6 +51,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http
                 .authorizeRequests()
                 .antMatchers("/").anonymous()
+                .antMatchers("/uploadImage").permitAll()
                 .antMatchers("/customer/re-sendActivation").permitAll()
                 .antMatchers("/resetPassword").permitAll()
                 .antMatchers("/token/**").permitAll()
