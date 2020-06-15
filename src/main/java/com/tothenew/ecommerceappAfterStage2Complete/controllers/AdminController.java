@@ -60,12 +60,12 @@ public class AdminController {
     }
 
     @GetMapping("/customers")
-    public List<AdminCustomerDTO> getCustomers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(required = false) Optional<String> email) {
+    public List<AdminCustomerDTO> getCustomers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "30") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(required = false) Optional<String> email) {
         return adminService.getCustomers(page,size,SortBy,email);
     }
 
     @GetMapping("/sellers")
-    public List<AdminSellerDTO> getSellers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(required = false) Optional<String> email) {
+    public List<AdminSellerDTO> getSellers(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "30") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(required = false) Optional<String> email) {
         return adminService.getSellers(page,size,SortBy,email);
     }
 }

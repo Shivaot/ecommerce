@@ -28,7 +28,7 @@ public class MetadataController {
     }
 
     @GetMapping("/view")
-    public List<CategoryMetadataField> viewMetadata(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(defaultValue = "ASC") String order, @RequestParam Optional<String> query) {
+    public List<CategoryMetadataField> viewMetadata(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "50") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(defaultValue = "ASC") String order, @RequestParam Optional<String> query) {
         return metadataService.viewMetadata(page,size,SortBy,order,query);
     }
 }

@@ -58,7 +58,7 @@ public class SellerProfileService {
         Seller seller = sellerRepo.findByEmail(sellerEmail);
         SellerProfileDTO sellerProfileDTO = modelMapper.map(seller,SellerProfileDTO.class);
         // check image format then set
-        File f = new File("/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users");
+        File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/users");
         File[] matchingFiles = new File[2];
         try {
             matchingFiles = f.listFiles(new FilenameFilter() {
@@ -68,12 +68,11 @@ public class SellerProfileService {
             });
         }
         catch (Exception ex) {}
-        if (matchingFiles.length>0) {
-            File file = new File(matchingFiles[0].toString());
-            System.out.println(file);
-            byte[] fileContent = Files.readAllBytes(file.toPath());
-            String encodedFile = new String(Base64.encodeBase64(fileContent), "UTF-8");
-            sellerProfileDTO.setImage(encodedFile);
+        try {
+            String[] arr = matchingFiles[0].toString().split("users/");
+            sellerProfileDTO.setImage("http://localhost:8080/users/" + arr[1]);
+        } catch (Exception ex) {
+            System.out.println(ex);
         }
 
         Set<Address> addresses = seller.getAddresses();
@@ -144,7 +143,7 @@ public class SellerProfileService {
                 try
                 {
                     try {
-                        File f = new File("/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users");
+                        File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/users/");
                             matchingFiles = f.listFiles(new FilenameFilter() {
                             public boolean accept(File dir, String name) {
                                 return name.startsWith(seller.getId().toString());
@@ -172,7 +171,7 @@ public class SellerProfileService {
                     ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                     image = ImageIO.read(bis);
                     bis.close();
-                    String path = "/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users/" + seller.getId();
+                    String path = "/home/shiva/software/afterStage2/src/main/resources/static/users/" + seller.getId();
 
                     File outputFile = new File(path+"."+fileExtension[0]);
                     ImageIO.write(image, fileExtension[0], outputFile);
@@ -214,7 +213,7 @@ public class SellerProfileService {
         Seller seller = sellerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         Set<Address> addresses = seller.getAddresses();
         addresses.forEach(a->{
-            if (a.getId() == address.get().getId()) {
+            if (a.getId().compareTo(address.get().getId()) == 0) {
                 a.setAddress(addressDTO.getAddress());
                 a.setCity(addressDTO.getCity());
                 a.setCountry(addressDTO.getCountry());

@@ -74,7 +74,10 @@ public class CategoryMetadataService {
             String value= String.join(",",categoryMetadataDTO.getFiledIdValues().get(id));
             associationSet.get().setValue(value);
             metadata.get().getCategoryMetadataFieldValues().add(associationSet.get());
-            metadataRepo.save(metadata.get());
+
+            try {
+                metadataRepo.save(metadata.get());
+            } catch (Exception ex) {}
         });
         return "Success";
     }

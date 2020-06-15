@@ -1,6 +1,7 @@
 package com.tothenew.ecommerceappAfterStage2Complete.dtos;
 
 public class SellerAddressDTO {
+    private Long id;
     private String country;
     private String city;
     private String state;
@@ -45,5 +46,13 @@ public class SellerAddressDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

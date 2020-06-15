@@ -126,7 +126,7 @@ public class ProductVariationService {
                 ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                 image = ImageIO.read(bis);
                 bis.close();
-                path = "/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/" + product.get().getId() + "/variations/" + variationRepo.getNextValMySequence() + "PI";
+                path = "/home/shiva/software/afterStage2/src/main/resources/static/products/" + product.get().getId() + "/variations/" + variationRepo.getNextValMySequence() + "PI";
 
                 File outputFile = new File(path + "." + fileExtension[0]);
                 ImageIO.write(image, fileExtension[0], outputFile);
@@ -156,7 +156,7 @@ public class ProductVariationService {
                     ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                     img = ImageIO.read(bis);
                     bis.close();
-                    String pathS = "/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/" + product.get().getId() + "/variations/" + variationRepo.getNextValMySequence() + "SI" + i;
+                    String pathS = "/home/shiva/software/afterStage2/src/main/resources/static/products/" + product.get().getId() + "/variations/" + variationRepo.getNextValMySequence() + "SI" + i;
                     System.out.println(pathS + "---------------");
                     File outputFile = new File(pathS + "." + fileExtension[0]);
                     ImageIO.write(img, fileExtension[0], outputFile);
@@ -189,7 +189,7 @@ public class ProductVariationService {
         if (!productVariation.isPresent()) {
             throw new ResourceNotFoundException(id + " product variation not found");
         }
-        if (productVariation.get().getProduct().getSeller().getId() != seller.getId()) {
+        if (productVariation.get().getProduct().getSeller().getId().compareTo(seller.getId()) != 0) {
             throw new ResourceNotFoundException("invalid seller");
         }
         if (productRepo.getDeletedStatus(productVariation.get().getProduct().getId())) {
@@ -231,7 +231,7 @@ public class ProductVariationService {
         }
         String sellerEmail = userEmailFromToken.getUserEmail(request);
         Seller seller = sellerRepo.findByEmail(sellerEmail);
-        if (productVariation.get().getProduct().getSeller().getId() != seller.getId()) {
+        if (productVariation.get().getProduct().getSeller().getId().compareTo(seller.getId()) != 0) {
             throw new ResourceNotFoundException("invalid seller");
         }
         if (productVariation.get().getProduct().getDeleted()) {
@@ -273,7 +273,7 @@ public class ProductVariationService {
             productVariation.get().setPrice(productVariationDTO.getPrice());
         }
         if (productVariationDTO.getQuantityAvailable() != null) {
-            productVariation.get().setQuantityAvailable(productVariationDTO.getQuantityAvailable().longValue());
+            productVariation.get().setQuantityAvailable(Long.valueOf(productVariationDTO.getQuantityAvailable()));
         }
         if (isActive.isPresent()) {
             productVariation.get().setActive(isActive.get());
@@ -284,13 +284,13 @@ public class ProductVariationService {
         imageExtensionsAllowed.add("png");
         imageExtensionsAllowed.add("bmp");
         String path;
-        if (!(productVariationDTO.getPrimaryImage() == null)) {
+        if (productVariationDTO.getPrimaryImage() != null && !productVariationDTO.getPrimaryImage().isEmpty()) {
             File fi;
             File[] matchingFiles = new File[5];
             try {
 
                 try {
-                    File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/" + productVariation.get().getProduct().getId() + "/variations");
+                    File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/products/" + productVariation.get().getProduct().getId() + "/variations");
                     matchingFiles = f.listFiles(new FilenameFilter() {
                         public boolean accept(File dir, String name) {
                             return name.startsWith(productVariationDTO.getProductId().toString() + "PI");
@@ -320,7 +320,7 @@ public class ProductVariationService {
                 ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                 image = ImageIO.read(bis);
                 bis.close();
-                path = "/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/" + productVariation.get().getProduct().getId() + "/variations/" + productVariationDTO.getProductId() + "PI";
+                path = "/home/shiva/software/afterStage2/src/main/resources/static/products/" + productVariation.get().getProduct().getId() + "/variations/" + productVariationDTO.getProductId() + "PI";
 
                 File outputFile = new File(path + "." + fileExtension[0]);
                 ImageIO.write(image, fileExtension[0], outputFile);
@@ -329,13 +329,13 @@ public class ProductVariationService {
             }
         }
 
-        if (productVariationDTO.getSecondaryImages() != null) {
+        if (productVariationDTO.getSecondaryImages() != null && productVariationDTO.getSecondaryImages().size() > 0 ) {
             File fi;
             File[] matchingFiles = new File[5];
             try {
 
                 try {
-                    File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/" + productVariation.get().getProduct().getId() + "/variations");
+                    File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/products/" + productVariation.get().getProduct().getId() + "/variations");
                     matchingFiles = f.listFiles(new FilenameFilter() {
                         public boolean accept(File dir, String name) {
                             return name.startsWith(productVariationDTO.getProductId().toString() + "SI");
@@ -369,7 +369,7 @@ public class ProductVariationService {
                         ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                         img = ImageIO.read(bis);
                         bis.close();
-                        String pathS = "/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/" + +productVariation.get().getProduct().getId() + "/variations/" + productVariationDTO.getProductId() + "SI" + i;
+                        String pathS = "/home/shiva/software/afterStage2/src/main/resources/static/products/" + +productVariation.get().getProduct().getId() + "/variations/" + productVariationDTO.getProductId() + "SI" + i;
 
                         System.out.println(pathS + "---------------");
                         File outputFile = new File(pathS + "." + fileExtension[0]);
@@ -382,10 +382,8 @@ public class ProductVariationService {
             } catch (Exception ex) {
             }
 
-            variationRepo.save(productVariation.get());
         }
-
-
+        variationRepo.save(productVariation.get());
         return "Success";
     }
 }

@@ -2,6 +2,7 @@ package com.tothenew.ecommerceappAfterStage2Complete.repositories;
 
 import com.tothenew.ecommerceappAfterStage2Complete.entities.product.Product;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -29,7 +30,7 @@ public interface ProductRepo extends CrudRepository<Product,Long> {
     @Query(value = "select * from product where category_id=:id AND is_deleted=false AND is_active=true",nativeQuery = true)
     List<Product> getAllProductsOfCategory(@Param("id") Long id,Pageable pageable);
 
-    @Query(value = "select * from product where is_deleted=false AND is_active=true",nativeQuery = true)
+    @Query(value = "select * from product where is_deleted=false",nativeQuery = true)
     List<Product> getAllProductsNonDeletedActive(Pageable pageable);
 
     @Query(value = "select brand from product where category_id=:id",nativeQuery = true)
@@ -38,5 +39,7 @@ public interface ProductRepo extends CrudRepository<Product,Long> {
     @Query(value = "select is_deleted from product where id=:id",nativeQuery = true)
     Boolean getDeletedStatus(@Param("id") Long id);
 
-
+    @Modifying
+    @Query(value= "update product set is_deleted=true where id=:id",nativeQuery=true)
+    void softDelete(@Param("id") Long id);
 }

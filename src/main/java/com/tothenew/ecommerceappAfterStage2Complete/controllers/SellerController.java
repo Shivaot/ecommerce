@@ -6,7 +6,6 @@ import com.tothenew.ecommerceappAfterStage2Complete.dtos.SellerAddressDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.SellerProfileDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.services.CategoryService;
 import com.tothenew.ecommerceappAfterStage2Complete.services.SellerProfileService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

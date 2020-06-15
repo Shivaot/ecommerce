@@ -77,7 +77,7 @@ public class CustomerProfileService {
                 try
                 {
                     try {
-                        File f = new File("/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users");
+                        File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/users");
                         matchingFiles = f.listFiles(new FilenameFilter() {
                             public boolean accept(File dir, String name) {
                                 return name.startsWith(customer.getId().toString());
@@ -105,7 +105,7 @@ public class CustomerProfileService {
                     ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
                     image = ImageIO.read(bis);
                     bis.close();
-                    String path = "/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users/" + customer.getId();
+                    String path = "/home/shiva/software/afterStage2/src/main/resources/static/users/" + customer.getId();
 
                     File outputFile = new File(path+"."+fileExtension[0]);
                     ImageIO.write(image, fileExtension[0], outputFile);
@@ -179,8 +179,7 @@ public class CustomerProfileService {
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         Set<Address> addresses = customer.getAddresses();
         addresses.forEach(a->{
-            if (a.getId() == address.get().getId()) {
-                a.setAddress(addressDTO.getAddress());
+            if (a.getId().compareTo(address.get().getId()) == 0) {
                 a.setCity(addressDTO.getCity());
                 a.setCountry(addressDTO.getCountry());
                 a.setLabel(addressDTO.getLabel());

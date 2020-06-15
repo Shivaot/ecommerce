@@ -20,7 +20,7 @@ public class Category {
     @Embedded
     private AuditingInformation auditingInformation;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
     private Category parentId;
 

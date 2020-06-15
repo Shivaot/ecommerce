@@ -16,7 +16,6 @@ public class HashMapConverter implements AttributeConverter<Map<String, Object>,
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-
     @Override
     public String convertToDatabaseColumn(Map<String, Object> customerInfo) {
 
@@ -42,7 +41,6 @@ public class HashMapConverter implements AttributeConverter<Map<String, Object>,
         } catch (final IOException e) {
             System.out.println("JSON reading error" + e);
         }
-
         return customerInfo;
     }
 

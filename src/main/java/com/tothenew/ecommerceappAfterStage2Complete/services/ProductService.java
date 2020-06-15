@@ -16,12 +16,15 @@ import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.UserEmailFromToken;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -44,6 +47,8 @@ public class ProductService {
     EmailSender emailSender;
     @Autowired
     ModelMapper modelMapper;
+
+    Logger logger = LoggerFactory.getLogger(ProductService.class);
 
     public String addProduct(HttpServletRequest request, String name, String brand, java.lang.Long categoryId, Optional<String> desc, Optional<Boolean> isCancellable, Optional<Boolean> isReturnable) {
         // check for leaf category
@@ -93,7 +98,7 @@ public class ProductService {
         categoryRepo.save(category.get());
         sellerRepo.save(seller);
         Optional<Product> savedProduct = productRepo.checkUniqueProductName(brand,name,seller.getId(),categoryId);
-        new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/"+savedProduct.get().getId()+"/variations").mkdirs();
+        new File("/home/shiva/software/afterStage2/src/main/resources/static/products/"+savedProduct.get().getId()+"/variations").mkdirs();
         emailSender.sendEmail("ACTIVATE ADDED PRODUCT",name+" " +categoryId+" "+brand,"shiva@admin.com");
 
         return "Success";
@@ -106,7 +111,7 @@ public class ProductService {
             throw new ResourceNotFoundException(id+" product not found");
         }
         Seller seller = sellerRepo.findByEmail(userEmail);
-        if (product.get().getSeller().getId() != seller.getId()) {
+        if (product.get().getSeller().getId().compareTo(seller.getId()) != 0) {
             throw new  ResourceNotFoundException("invalid seller");
         }
         if (product.get().getDeleted()) {
@@ -139,6 +144,7 @@ public class ProductService {
         return products;
     }
 
+    @Transactional
     public String deleteProductById(Long id, HttpServletRequest request) {
         String userEmail = userEmailFromToken.getUserEmail(request);
         Optional<Product> product = productRepo.findById(id);
@@ -146,10 +152,12 @@ public class ProductService {
             throw new ResourceNotFoundException(id+" product not found");
         }
         Seller seller = sellerRepo.findByEmail(userEmail);
-        if (product.get().getSeller().getId() != seller.getId()) {
+        if (product.get().getSeller().getId().compareTo(seller.getId()) != 0) {
             throw new  ResourceNotFoundException("invalid seller");
         }
         product.get().setDeleted(true);
+        System.out.println(product.get().getDeleted()+"----------");
+//        productRepo.softDelete(id);
         productRepo.save(product.get());
         return "Success";
     }
@@ -161,7 +169,7 @@ public class ProductService {
             throw new ResourceNotFoundException(id+" product not found");
         }
         Seller seller = sellerRepo.findByEmail(userEmail);
-        if (product.get().getSeller().getId() != seller.getId()) {
+        if (product.get().getSeller().getId().compareTo(seller.getId()) != 0) {
             throw new  ResourceNotFoundException("invalid seller");
         }
         System.out.println(product.get().getBrand()+name.get()+seller.getId()+product.get().getCategory());
@@ -207,38 +215,28 @@ public class ProductService {
 
         ProductVarPlusImagesDTO productVarPlusImagesDTO = new ProductVarPlusImagesDTO();
         productVarPlusImagesDTO.setProductVariation(product.get().getProductVariations());
-
         List<String> images = new ArrayList<>();
-        product.get().getProductVariations().forEach(pv->{
-            File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/"  + productId + "/variations");
-        File[] matchingFiles = new File[2];
-        System.out.println(matchingFiles.length);
         try {
-            matchingFiles = f.listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.startsWith(pv.getId().toString());
+            product.get().getProductVariations().forEach(productVariation -> {
+                File  f = new File("/home/shiva/software/afterStage2/src/main/resources/static/products/"  + productId + "/variations/");
+                File[] matchingFiles = new File[20];
+                try {
+                    matchingFiles = f.listFiles(new FilenameFilter() {
+                        public boolean accept(File dir, String name) {
+                            return name.contains(productVariation.getId().toString());
+                        }
+                    });
+                }
+                catch (Exception ex) {}
+                for (int i=0;i<matchingFiles.length;i++) {
+                    String[] arr = matchingFiles[i].toString().split("variations/");
+                    System.out.println(arr[1]);
+                    images.add("localhost:8080/products/"+ productId +"/variations/" + arr[1]);
                 }
             });
+        } catch (Exception ex) {
+            logger.error("error",ex);
         }
-        catch (Exception ex) {}
-        if (matchingFiles.length>0) {
-            File file = new File(matchingFiles[0].toString());
-            System.out.println(file);
-            byte[] fileContent = new byte[0];
-            try {
-                fileContent = Files.readAllBytes(file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String encodedFile = null;
-            try {
-                encodedFile = new String(Base64.encodeBase64(fileContent), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            images.add(encodedFile);
-        }
-        });
         productVarPlusImagesDTO.setImages(images);
         customerProductViewByIdDTO.setProductVarPlusImagesDTO(productVarPlusImagesDTO);
 
@@ -254,36 +252,46 @@ public class ProductService {
             throw new ResourceNotFoundException("not a leaf node");
         }
         CustomerAllProductByCategoryDTO customerAllProductByCategoryDTO = new CustomerAllProductByCategoryDTO();
-        customerAllProductByCategoryDTO.setProducts(productRepo.getAllProductsOfCategory(categoryId,PageRequest.of(Integer.parseInt(page),Integer.parseInt(size),Sort.by(Sort.Direction.fromString(order),sortBy))));
-        File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/"  + "214" + "/variations");
-        File[] matchingFiles = new File[2];
-        System.out.println(matchingFiles.length);
+        List<String> images = new ArrayList<>();
+        List<HashMap<Long, String>> prices = new ArrayList<>();
+        List<Product> products = productRepo.getAllProductsOfCategory(categoryId,PageRequest.of(Integer.parseInt(page),Integer.parseInt(size),Sort.by(Sort.Direction.fromString(order),sortBy)));
+        customerAllProductByCategoryDTO.setProducts(products);
         try {
-            matchingFiles = f.listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.startsWith("215");
+            products.forEach(product -> {
+                File  f = new File("/home/shiva/software/afterStage2/src/main/resources/static/products/"  + product.getId() + "/variations");
+                File[] matchingFiles = new File[10];
+                try {
+                    matchingFiles = f.listFiles(new FilenameFilter() {
+                        public boolean accept(File dir, String name) {
+                            return name.contains("PI");
+                        }
+                    });
                 }
+                catch (Exception ex) {
+                    logger.error("error: ",ex);
+                }
+                for (int i=0;i<matchingFiles.length;i++) {
+                    String[] arr = matchingFiles[i].toString().split("variations/");
+                    System.out.println(arr[1]);
+                    images.add("localhost:8080/products/"+ product.getId() +"/variations/" + arr[1]);
+                }
+                prices.add(getPrice(product.getId()));
             });
+        } catch (Exception ex) {
+            logger.error("error",ex);
         }
-        catch (Exception ex) {}
-        if (matchingFiles.length>0) {
-            File file = new File(matchingFiles[0].toString());
-            System.out.println(file);
-            byte[] fileContent = new byte[0];
-            try {
-                fileContent = Files.readAllBytes(file.toPath());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            String encodedFile = null;
-            try {
-                encodedFile = new String(Base64.encodeBase64(fileContent), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            customerAllProductByCategoryDTO.setImage(encodedFile);
-        }
+        customerAllProductByCategoryDTO.setImages(images);
+        customerAllProductByCategoryDTO.setPrices(prices);
         return customerAllProductByCategoryDTO;
+    }
+
+    private HashMap<Long, String> getPrice(Long id) {
+        Optional<Product> product = productRepo.findById(id);
+        HashMap<Long,String> hashMap = new HashMap<>();
+        product.get().getProductVariations().forEach(pv->{
+            hashMap.put(id,pv.getPrice().toString());
+        });
+        return hashMap;
     }
 
     public CustomerAllProductByCategoryDTO viewAllSimilarProducts(Long productId, String page, String size, String sortBy, String order) {
@@ -309,7 +317,7 @@ public class ProductService {
 
         List<String> images = new ArrayList<>();
         product.get().getProductVariations().forEach(pv->{
-            File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/"  + productId + "/variations");
+            File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/products/"  + productId + "/variations");
             File[] matchingFiles = new File[2];
             try {
                 matchingFiles = f.listFiles(new FilenameFilter() {
@@ -358,7 +366,7 @@ public class ProductService {
         List<Product> products = productRepo.getAllProductsNonDeletedActive(PageRequest.of(Integer.parseInt(page),Integer.parseInt(size),Sort.by(Sort.Direction.fromString(order),sortBy)));
         CustomerAllProductByCategoryDTO customerAllProductByCategoryDTO = new CustomerAllProductByCategoryDTO();
         customerAllProductByCategoryDTO.setProducts(products);
-        File f = new File("/home/shiva/Documents/javaPrograms/ecommerce-app/src/main/resources/static/products/"  + "214" + "/variations");
+        File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/products/"  + "214" + "/variations");
         File[] matchingFiles = new File[2];
         System.out.println(matchingFiles.length);
         try {

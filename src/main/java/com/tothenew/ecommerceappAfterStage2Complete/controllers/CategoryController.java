@@ -56,7 +56,7 @@ public class CategoryController {
     }
 
     @GetMapping("/all")
-    public List<CategoryDTO> viewCategories(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(defaultValue = "ASC") String order,@RequestParam Optional<String> query) {
+    public List<CategoryDTO> viewCategories(@RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "50") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(defaultValue = "ASC") String order,@RequestParam Optional<String> query) {
        return categoryService.viewCategories(page,size,SortBy,order,query);
     }
 

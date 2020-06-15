@@ -35,7 +35,7 @@ public class CustomerController {
     @GetMapping("")
     public CustomerProfileDTO viewProfile(HttpServletRequest request) throws IOException {
         CustomerProfileDTO customerProfileDTO = modelMapper.map(customerProfileService.viewProfile(request),CustomerProfileDTO.class);
-        File f = new File("/home/shiva/Documents/javaPrograms/afterStage2/afterStage2/src/main/resources/static/users");
+        File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/users");
         File[] matchingFiles = new File[2];
         try {
             matchingFiles = f.listFiles(new FilenameFilter() {
@@ -44,13 +44,16 @@ public class CustomerController {
                 }
             });
         }
-        catch (Exception ex) {}
-        if (matchingFiles.length>0) {
-            File file = new File(matchingFiles[0].toString());
-            byte[] fileContent = Files.readAllBytes(file.toPath());
-            String encodedFile = new String(Base64.encodeBase64(fileContent), "UTF-8");
-            customerProfileDTO.setImage(encodedFile);
+        catch (Exception ex) {
+            System.out.println(ex);
         }
+        try {
+            String[] arr = matchingFiles[0].toString().split("users/");
+            customerProfileDTO.setImage("http://localhost:8080/users/" + arr[1]);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+
 
         return customerProfileDTO;
     }

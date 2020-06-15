@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -76,7 +77,7 @@ public class ProductController {
         return getMessage;
     }
 
-    @PutMapping("/update/{id}")
+    @PostMapping("/update/{id}")
     public String updateProductById(@PathVariable Long id,@RequestParam Optional<String> name,@RequestParam Optional<String> desc, @RequestParam Optional<Boolean> isCancellable, @RequestParam Optional<Boolean> isReturnable,HttpServletResponse response,HttpServletRequest request) {
         String getMessage = productService.updateProductById(request,id,name,desc,isCancellable,isReturnable);
         if ("Success".contentEquals(getMessage)) {
@@ -89,6 +90,11 @@ public class ProductController {
 
     @GetMapping("/customer/{productId}")
     public CustomerProductViewByIdDTO viewProductCustomer(@PathVariable Long productId) throws IOException {
+        return productService.viewProductCustomer(productId);
+    }
+
+    @GetMapping("/seller/{productId}")
+    public CustomerProductViewByIdDTO viewProductSeller(@PathVariable Long productId) throws IOException {
         return productService.viewProductCustomer(productId);
     }
 
@@ -108,7 +114,7 @@ public class ProductController {
     }
 
     @GetMapping("/admin/all")
-    public CustomerAllProductByCategoryDTO viewAllProductsAdmin( @RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "10") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(defaultValue = "ASC") String order,@RequestParam(name = "query") Optional<Long> query) {
+    public CustomerAllProductByCategoryDTO viewAllProductsAdmin( @RequestParam(defaultValue = "0") String page, @RequestParam(defaultValue = "50") String size, @RequestParam(defaultValue = "id") String SortBy, @RequestParam(defaultValue = "ASC") String order,@RequestParam(name = "query") Optional<Long> query) {
         return productService.viewAllProductsAdmin(page,size,SortBy,order,query);
     }
 

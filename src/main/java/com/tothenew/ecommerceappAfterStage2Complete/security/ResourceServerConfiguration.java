@@ -14,6 +14,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableResourceServer
@@ -49,46 +54,48 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/").anonymous()
-                .antMatchers("/uploadImage").permitAll()
-                .antMatchers("/customer/re-sendActivation").permitAll()
-                .antMatchers("/resetPassword").permitAll()
-                .antMatchers("/token/**").permitAll()
-                .antMatchers("/customer/activate/**").permitAll()
-                .antMatchers("/customer/registration").permitAll()
-                .antMatchers("/seller/registration").permitAll()
-                .antMatchers("/admin/**").hasAnyRole("ADMIN")
-                .antMatchers("/customers").hasAnyRole("ADMIN")
-                .antMatchers("/sellers").hasAnyRole("ADMIN")
-                .antMatchers("/metadata/**").hasAnyRole("ADMIN")
-                .antMatchers("/category/**").hasAnyRole("ADMIN")
-                .antMatchers("/categoryMetadata/**").hasAnyRole("ADMIN")
-                .antMatchers("/product/admin/**").hasAnyRole("ADMIN")
-                .antMatchers("/product/customer/**").hasAnyRole("CUSTOMER")
+            .authorizeRequests()
+            .antMatchers("/").anonymous()
+            .antMatchers("/uploadImage").permitAll().antMatchers("/products/**").permitAll().antMatchers("/users/**").permitAll()
+            .antMatchers("/customer/re-sendActivation").permitAll()
+            .antMatchers("/resetPassword").permitAll()
+            .antMatchers("/token/**").permitAll()
+            .antMatchers("/customer/activate/**").permitAll()
+            .antMatchers("/customer/registration").permitAll()
+            .antMatchers("/seller/registration").permitAll()
+            .antMatchers("/admin/**").hasAnyRole("ADMIN")
+            .antMatchers("/customers").hasAnyRole("ADMIN")
+            .antMatchers("/sellers").hasAnyRole("ADMIN")
+            .antMatchers("/metadata/**").hasAnyRole("ADMIN")
+            .antMatchers("/category/**").hasAnyRole("ADMIN")
+            .antMatchers("/categoryMetadata/**").hasAnyRole("ADMIN")
+            .antMatchers("/product/admin/**").hasAnyRole("ADMIN")
+            .antMatchers("/product/customer/**").hasAnyRole("CUSTOMER")
+                .antMatchers("/product/seller/**").hasAnyRole("SELLER")
                 .antMatchers("/customer/profile/categories").hasAnyRole("CUSTOMER")
-                .antMatchers("/customer/profile/**").hasAnyRole("CUSTOMER")
-                .antMatchers("/customer/profile/**").hasAnyRole("CUSTOMER")
-                .antMatchers("/user/home").hasAnyRole("CUSTOMER")
-                .antMatchers("/seller/profile/categories").hasAnyRole("SELLER")
-                .antMatchers("/seller/profile/**").hasAnyRole("SELLER")
-                .antMatchers("/product/add/**").hasAnyRole("SELLER")
-                .antMatchers("/product/view/**").hasAnyRole("SELLER")
-                .antMatchers("/product/update/**").hasAnyRole("SELLER")
-                .antMatchers("/product/delete/**").hasAnyRole("SELLER")
-                .antMatchers("/productVariation/add/**").hasAnyRole("SELLER")
-                .antMatchers("/productVariation/view/**").hasAnyRole("SELLER")
-                .antMatchers("/productVariation/update/**").hasAnyRole("SELLER")
-                .antMatchers("/doLogout").hasAnyRole("ADMIN","CUSTOMER","SELLER")
-                .antMatchers("/swagger-ui.html").permitAll()
-                .antMatchers("/v2/**").permitAll()
-                .antMatchers("/webjars/**").permitAll()
-                .antMatchers("/swagger-resources/**").permitAll()
-                .antMatchers("/configuration/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .csrf().disable();
+            .antMatchers("/customer/profile/**").hasAnyRole("CUSTOMER")
+            .antMatchers("/customer/profile/**").hasAnyRole("CUSTOMER")
+            .antMatchers("/user/home").hasAnyRole("CUSTOMER")
+            .antMatchers("/seller/profile/categories").hasAnyRole("SELLER")
+            .antMatchers("/seller/profile/**").hasAnyRole("SELLER")
+            .antMatchers("/product/add/**").hasAnyRole("SELLER")
+            .antMatchers("/product/view/**").hasAnyRole("SELLER")
+            .antMatchers("/product/update/**").hasAnyRole("SELLER")
+            .antMatchers("/product/delete/**").hasAnyRole("SELLER")
+            .antMatchers("/productVariation/add/**").hasAnyRole("SELLER")
+            .antMatchers("/productVariation/view/**").hasAnyRole("SELLER")
+            .antMatchers("/productVariation/update/**").hasAnyRole("SELLER")
+            .antMatchers("/doLogout").hasAnyRole("ADMIN","CUSTOMER","SELLER")
+            .antMatchers("/swagger-ui.html").permitAll()
+            .antMatchers("/v2/**").permitAll()
+            .antMatchers("/webjars/**").permitAll()
+            .antMatchers("/swagger-resources/**").permitAll()
+            .antMatchers("/configuration/**").permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+            .csrf().disable();
+
     }
 }
