@@ -1,6 +1,7 @@
 package com.tothenew.ecommerceappAfterStage2Complete.entities.users;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.order.Cart;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.order.OrderTable;
@@ -50,6 +51,7 @@ public class Customer extends User {
         this.orderTables = orderTables;
     }
 
+    @JsonIgnore
     public Cart getCart() {
         return cart;
     }
