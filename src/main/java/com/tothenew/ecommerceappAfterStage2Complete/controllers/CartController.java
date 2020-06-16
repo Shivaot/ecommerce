@@ -3,14 +3,17 @@ package com.tothenew.ecommerceappAfterStage2Complete.controllers;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.CartDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.ResponseDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.services.CartService;
+import com.tothenew.ecommerceappAfterStage2Complete.services.ValidationErrorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +28,7 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping("/addItem")
-    public ResponseEntity<?> addProductToCart(@RequestBody CartDTO cartDTO,HttpServletRequest request) {
+    public ResponseEntity<?> addProductToCart(@Valid @RequestBody CartDTO cartDTO, HttpServletRequest request) {
         logger.info("Inside add Product To Cart");
         cartService.addToCart(cartDTO,request);
         return new ResponseEntity<>(new ResponseDTO("Product Added to Cart",new Date()), HttpStatus.CREATED);

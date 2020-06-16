@@ -92,6 +92,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
             .antMatchers("/swagger-resources/**").permitAll()
             .antMatchers("/configuration/**").permitAll()
             .antMatchers("/cart/**").hasAnyRole("CUSTOMER")
+            .antMatchers("/order/**").hasAnyRole("CUSTOMER")
             .anyRequest().authenticated()
             .and()
             .sessionManagement()

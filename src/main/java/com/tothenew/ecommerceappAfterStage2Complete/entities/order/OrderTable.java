@@ -1,10 +1,12 @@
 package com.tothenew.ecommerceappAfterStage2Complete.entities.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.Customer;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.utils.AuditingInformation;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -113,6 +115,7 @@ public class OrderTable {
         this.auditingInformation = auditingInformation;
     }
 
+    @JsonIgnore
     public Customer getCustomer() {
         return customer;
     }

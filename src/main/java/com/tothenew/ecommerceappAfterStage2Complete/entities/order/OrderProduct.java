@@ -1,5 +1,6 @@
 package com.tothenew.ecommerceappAfterStage2Complete.entities.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.product.ProductVariation;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.utils.HashMapConverter;
 
@@ -21,7 +22,7 @@ public class OrderProduct {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_variation_id")
     private ProductVariation productVariation;
 
@@ -55,6 +56,7 @@ public class OrderProduct {
         this.price = price;
     }
 
+    @JsonIgnore
     public OrderTable getOrderTable() {
         return orderTable;
     }
@@ -62,6 +64,7 @@ public class OrderProduct {
     public void setOrderTable(OrderTable orderTable) {
         this.orderTable = orderTable;
     }
+
 
     public ProductVariation getProductVariation() {
         return productVariation;

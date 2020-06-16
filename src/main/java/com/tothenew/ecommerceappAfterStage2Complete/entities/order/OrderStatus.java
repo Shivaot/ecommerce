@@ -1,9 +1,11 @@
 package com.tothenew.ecommerceappAfterStage2Complete.entities.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.enums.FromStatus;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.enums.ToStatus;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 public class OrderStatus {
@@ -20,9 +22,21 @@ public class OrderStatus {
 
     private String transitionNotesComments;
 
+    private Date statusChangeDate;
+
     @ManyToOne
     @JoinColumn(name = "order_product_id")
     private OrderProduct orderProduct;
+
+    @PrePersist
+    protected void onStatusCreate() {
+        this.statusChangeDate = new Date();
+    }
+
+    @PreUpdate
+    protected void onStatusUpdate() {
+        this.statusChangeDate = new Date();
+    }
 
     public Long getId() {
         return id;
@@ -56,11 +70,20 @@ public class OrderStatus {
         this.transitionNotesComments = transitionNotesComments;
     }
 
+    @JsonIgnore
     public OrderProduct getOrderProduct() {
         return orderProduct;
     }
 
     public void setOrderProduct(OrderProduct orderProduct) {
         this.orderProduct = orderProduct;
+    }
+
+    public Date getStatusChangeDate() {
+        return statusChangeDate;
+    }
+
+    public void setStatusChangeDate(Date statusChangeDate) {
+        this.statusChangeDate = statusChangeDate;
     }
 }
