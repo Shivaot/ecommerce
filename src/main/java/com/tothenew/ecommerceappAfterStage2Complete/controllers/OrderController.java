@@ -1,10 +1,14 @@
 package com.tothenew.ecommerceappAfterStage2Complete.controllers;
 
+import com.tothenew.ecommerceappAfterStage2Complete.config.ConfigureRabbitMq;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.OrderDTO;
+import com.tothenew.ecommerceappAfterStage2Complete.dtos.RabbitMqOrderDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.ResponseDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.services.OrderService;
+import com.tothenew.ecommerceappAfterStage2Complete.utils.UserEmailFromToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +27,18 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private UserEmailFromToken userEmailFromToken;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createNewOrder(@RequestBody OrderDTO orderDTO, HttpServletRequest request) {
+    public ResponseEntity<?> createNewOrder(@RequestBody OrderDTO orderDTO,HttpServletRequest request) {
         logger.info("Inside create new order");
-        orderService.createOrder(orderDTO,request);
+        RabbitMqOrderDTO rabbitMqOrderDTO = new RabbitMqOrderDTO();
+        rabbitMqOrderDTO.setOrderDTO(orderDTO);
+        rabbitMqOrderDTO.setEmail(userEmailFromToken.getUserEmail(request));
+        rabbitTemplate.convertAndSend(ConfigureRabbitMq.EXCHANGE_NAME,"Order.orders",rabbitMqOrderDTO);
         return new ResponseEntity<>(new ResponseDTO("Order Placed Successfully",new Date()), HttpStatus.CREATED);
     }
 

@@ -1,4 +1,4 @@
-package com.tothenew.ecommerceapp;
+package com.tothenew.ecommerceappAfterStage2Complete.services;
 
 import com.tothenew.ecommerceappAfterStage2Complete.entities.users.*;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.ProductVariationRepo;

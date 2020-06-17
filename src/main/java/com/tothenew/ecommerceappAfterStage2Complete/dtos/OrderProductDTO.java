@@ -1,9 +1,10 @@
 package com.tothenew.ecommerceappAfterStage2Complete.dtos;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Map;
 
-public class OrderProductDTO {
+public class OrderProductDTO implements Serializable {
 
     private Integer quantity;
     private BigDecimal price;

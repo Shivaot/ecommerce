@@ -59,9 +59,7 @@ public class CategoryService {
             }
             category.setName(name);
             category.setParentId(categoryRepo.findById(parentId.get()).get());
-            System.out.println("m here");
             categoryRepo.save(category);
-            System.out.println("m here");
             return "Success " + categoryRepo.findByNameAndParentId(name,parentId.get()).getId();
 
         }

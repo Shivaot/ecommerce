@@ -37,7 +37,7 @@ public class AdminService {
         if (email.isPresent()) {
             Customer customer = customerRepo.findByEmail(email.get());
             if (customer == null) {
-                throw new FieldAlreadyExistException("email not found");
+                throw new ResourceNotFoundException("email not found");
             }
             AdminCustomerDTO adminCustomerDTO = new AdminCustomerDTO();
             adminCustomerDTO.setFullName(customer.getFirstName() + customer.getMiddleName() + " " +  customer.getLastName());

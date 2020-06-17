@@ -2,6 +2,7 @@ package com.tothenew.ecommerceappAfterStage2Complete.services;
 
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.OrderDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.dtos.OrderProductDTO;
+import com.tothenew.ecommerceappAfterStage2Complete.dtos.RabbitMqOrderDTO;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.enums.FromStatus;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.enums.ToStatus;
 import com.tothenew.ecommerceappAfterStage2Complete.entities.order.OrderProduct;
@@ -41,14 +42,14 @@ public class OrderService {
 
     Logger logger = LoggerFactory.getLogger(OrderService.class);
 
-    public void createOrder(OrderDTO orderDTO, HttpServletRequest request) {
-        OrderTable orderTable = orderDTOToOrderTableConverter(orderDTO,request);
+    public void createOrder(RabbitMqOrderDTO rabbitMqOrderDTO) {
+        OrderTable orderTable = orderDTOToOrderTableConverter(rabbitMqOrderDTO.getOrderDTO(),rabbitMqOrderDTO.getEmail());
         Set<OrderProduct> orderProducts = new HashSet<>();
-        orderDTO.getProductDTOS().forEach(orderProductDTO -> {
+        rabbitMqOrderDTO.getOrderDTO().getProductDTOS().forEach(orderProductDTO -> {
             orderProductDTOToOrderProductConverter(orderProductDTO,orderTable,orderProducts);
         });
         orderRepo.save(orderTable);
-        emailSender.sendEmail("ORDER PLACED","Your order has been successfully placed",customerRepo.findByEmail(userEmailFromToken.getUserEmail(request)).getEmail());
+        emailSender.sendEmail("ORDER PLACED","Your order has been successfully placed",rabbitMqOrderDTO.getEmail());
         logger.info("Order created success");
     }
 
@@ -87,8 +88,8 @@ public class OrderService {
 
     }
 
-    private OrderTable orderDTOToOrderTableConverter(OrderDTO orderDTO,HttpServletRequest request) {
-        Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
+    private OrderTable orderDTOToOrderTableConverter(OrderDTO orderDTO,String email) {
+        Customer customer = customerRepo.findByEmail(email);
         OrderTable orderTable = new OrderTable();
         orderTable.setAmountPaid(orderDTO.getAmountPaid());
         orderTable.setPaymentMethod(orderDTO.getPaymentMethod());

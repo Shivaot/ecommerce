@@ -1,10 +1,11 @@
 package com.tothenew.ecommerceappAfterStage2Complete.dtos;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
-public class OrderDTO {
+public class OrderDTO implements Serializable {
 
     private BigDecimal amountPaid;
     private Date date;
@@ -16,6 +17,9 @@ public class OrderDTO {
     private Integer customerZipCode;
     private String customerAddressLabel;
     private Set<OrderProductDTO> productDTOS;
+
+    public OrderDTO() {
+    }
 
     public BigDecimal getAmountPaid() {
         return amountPaid;
