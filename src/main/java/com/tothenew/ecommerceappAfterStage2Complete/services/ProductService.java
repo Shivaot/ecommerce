@@ -156,7 +156,6 @@ public class ProductService {
             throw new  ResourceNotFoundException("invalid seller");
         }
         product.get().setDeleted(true);
-        System.out.println(product.get().getDeleted()+"----------");
 //        productRepo.softDelete(id);
         productRepo.save(product.get());
         return "Success";
@@ -208,7 +207,9 @@ public class ProductService {
             if (product.get().getProductVariations().isEmpty()) {
                 throw new ResourceNotFoundException(productId+" product not have any variations");
             }
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            logger.error("Exception occurred",ex);
+        }
 
         CustomerProductViewByIdDTO customerProductViewByIdDTO = new CustomerProductViewByIdDTO();
         customerProductViewByIdDTO.setProduct(product.get());
@@ -227,7 +228,9 @@ public class ProductService {
                         }
                     });
                 }
-                catch (Exception ex) {}
+                catch (Exception ex) {
+                    logger.error("Exception Occurred",ex);
+                }
                 for (int i=0;i<matchingFiles.length;i++) {
                     String[] arr = matchingFiles[i].toString().split("variations/");
                     System.out.println(arr[1]);
@@ -376,7 +379,9 @@ public class ProductService {
                 }
             });
         }
-        catch (Exception ex) {}
+        catch (Exception ex) {
+            logger.error("Exception occurred",ex);
+        }
         if (matchingFiles.length>0) {
             File file = new File(matchingFiles[0].toString());
             System.out.println(file);

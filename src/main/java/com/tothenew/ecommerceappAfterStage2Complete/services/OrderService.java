@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -39,9 +40,12 @@ public class OrderService {
     private ProductVariationRepo productVariationRepo;
     @Autowired
     private EmailSender emailSender;
+    @Autowired
+    private CartRepo cartRepo;
 
     Logger logger = LoggerFactory.getLogger(OrderService.class);
 
+    @Transactional
     public void createOrder(RabbitMqOrderDTO rabbitMqOrderDTO) {
         OrderTable orderTable = orderDTOToOrderTableConverter(rabbitMqOrderDTO.getOrderDTO(),rabbitMqOrderDTO.getEmail());
         Set<OrderProduct> orderProducts = new HashSet<>();
@@ -49,8 +53,11 @@ public class OrderService {
             orderProductDTOToOrderProductConverter(orderProductDTO,orderTable,orderProducts);
         });
         orderRepo.save(orderTable);
-        emailSender.sendEmail("ORDER PLACED","Your order has been successfully placed",rabbitMqOrderDTO.getEmail());
         logger.info("Order created success");
+        emailSender.sendEmail("ORDER PLACED","Your order has been successfully placed",rabbitMqOrderDTO.getEmail());
+        cartRepo.deleteByCustomerId(customerRepo.findByEmail(rabbitMqOrderDTO.getEmail()).getId());
+        logger.info("Cart is empty now");
+
     }
 
     public List<?> getAllOrders(HttpServletRequest request) {

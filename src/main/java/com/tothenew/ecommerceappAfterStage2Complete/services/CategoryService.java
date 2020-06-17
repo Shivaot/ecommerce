@@ -144,7 +144,9 @@ public class CategoryService {
             categoryDTO.setCategory(category.get());
             categoryDTO.setChildCategory(childrenCategorySet);
             categoryDTO.setFiledValuesSet(filedValuesSet);
-        }catch (Exception ex) {}
+        }catch (Exception ex) {
+            logger.error("Exception Occurred",ex);
+        }
 
         return categoryDTO;
     }
@@ -202,7 +204,7 @@ public class CategoryService {
         }
         List<FilterCategoryDTO> categoryDTOS = new ArrayList<>();
         List<Long> leafCategories = categoryRepo.getParentCategories();
-        System.out.println(leafCategories);
+        logger.info("Leaf Categories: ",leafCategories);
         if (leafCategories.contains(categoryId)) {
             // not a leaf category
             List<Optional<Category>> immediateChildren = categoryRepo.findByParentId(categoryId);

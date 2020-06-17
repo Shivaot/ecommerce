@@ -20,4 +20,8 @@ public interface CartRepo extends CrudRepository<Cart,Long> {
     @Modifying
     @Query(value = "delete from cart where id=:id",nativeQuery = true)
     void deleteByCartId(@Param("id") Long id);
+
+    @Modifying
+    @Query(value = "delete from cart where customer_user_id=:id ",nativeQuery = true)
+    void deleteByCustomerId(@Param("id") Long id);
 }

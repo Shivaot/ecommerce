@@ -33,4 +33,13 @@ public class CategoryDTO{
     public void setChildCategory(Set<Category> childCategory) {
         this.childCategory = childCategory;
     }
+
+    @Override
+    public String toString() {
+        return "CategoryDTO{" +
+                "category=" + category +
+                ", filedValuesSet=" + filedValuesSet +
+                ", childCategory=" + childCategory +
+                '}';
+    }
 }

@@ -74,6 +74,7 @@ class AdminServiceTest {
         assertThrows(FieldAlreadyExistException.class,executable);
     }
 
+    //  will not always pass
     @Test
     void shouldDeactivateUser() {
         // given
