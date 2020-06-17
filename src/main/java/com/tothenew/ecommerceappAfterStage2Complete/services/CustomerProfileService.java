@@ -13,6 +13,8 @@ import com.tothenew.ecommerceappAfterStage2Complete.utils.EmailSender;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.UserEmailFromToken;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.PasswordValidator;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,6 +47,8 @@ public class CustomerProfileService {
     @Autowired
     AddressRepo addressRepo;
 
+    Logger logger = LoggerFactory.getLogger(CustomerProfileService.class);
+
     public Customer viewProfile(HttpServletRequest request) {
         String customerEmail = userEmailFromToken.getUserEmail(request);
         Customer customer = customerRepo.findByEmail(customerEmail);
@@ -57,15 +61,15 @@ public class CustomerProfileService {
         imageExtensionsAllowed.add("jpeg");
         imageExtensionsAllowed.add("png");
         imageExtensionsAllowed.add("bmp");
-        if (!(customerProfileDTO.getContact() == null) && (customerProfileDTO.getContact().length()!=10)) {
+        if (!(customerProfileDTO.getContact() == null) && (customerProfileDTO.getContact().length() != 10)) {
             throw new ContactInvalidException("invalid contact");
         }
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         try {
-            if (!(customerProfileDTO.getFirstName()  == null)){
+            if (!(customerProfileDTO.getFirstName() == null)) {
                 customer.setFirstName(customerProfileDTO.getFirstName());
             }
-            if (!(customerProfileDTO.getLastName() == null)){
+            if (!(customerProfileDTO.getLastName() == null)) {
                 customer.setLastName(customerProfileDTO.getLastName());
             }
             if (!(customerProfileDTO.getContact() == null)) {
@@ -74,8 +78,7 @@ public class CustomerProfileService {
             if (!(customerProfileDTO.getImage() == null)) {
                 File fi;
                 File[] matchingFiles = new File[2];
-                try
-                {
+                try {
                     try {
                         File f = new File("/home/shiva/software/afterStage2/src/main/resources/static/users");
                         matchingFiles = f.listFiles(new FilenameFilter() {
@@ -86,7 +89,9 @@ public class CustomerProfileService {
                         fi = new File(matchingFiles[0].toString());
                         Path fileToDeletePath = Paths.get(String.valueOf(fi));
                         Files.delete(fileToDeletePath);
-                    } catch(Exception ex) {}
+                    } catch (Exception ex) {
+                        logger.error("Exception Occurred", ex);
+                    }
 
                     String parts[] = customerProfileDTO.getImage().split(",");
                     String imageName = parts[0];
@@ -107,21 +112,20 @@ public class CustomerProfileService {
                     bis.close();
                     String path = "/home/shiva/software/afterStage2/src/main/resources/static/users/" + customer.getId();
 
-                    File outputFile = new File(path+"."+fileExtension[0]);
+                    File outputFile = new File(path + "." + fileExtension[0]);
                     ImageIO.write(image, fileExtension[0], outputFile);
-                }
-                catch(Exception e) {
-                    System.out.println(e);
+                } catch (Exception e) {
+                    logger.error("Exception Occurred", e);
                 }
             }
         } catch (NullPointerException ex) {
-            System.out.println(ex);
+            logger.error("Exception Occurred", ex);
         }
         customerRepo.save(customer);
         return "Success";
     }
 
-    public boolean updatePassword(String pass,String cPass,HttpServletRequest request) {
+    public boolean updatePassword(String pass, String cPass, HttpServletRequest request) {
         if (!pass.contentEquals(cPass)) {
             throw new InvalidPasswordException("Password and confirm password does not match");
         }
@@ -132,13 +136,13 @@ public class CustomerProfileService {
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         customer.setPassword(passwordEncoder.encode(pass));
         customerRepo.save(customer);
-        emailSender.sendEmail("PASSWORD CHANGED","Your password changed",customer.getEmail());
+        emailSender.sendEmail("PASSWORD CHANGED", "Your password changed", customer.getEmail());
         return true;
     }
 
-    public boolean newAddress(AddressDTO addressDTO,HttpServletRequest request) {
+    public boolean newAddress(AddressDTO addressDTO, HttpServletRequest request) {
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
-        Address address = modelMapper.map(addressDTO,Address.class);
+        Address address = modelMapper.map(addressDTO, Address.class);
         Set<Address> addresses = customer.getAddresses();
         addresses.add(address);
         customer.setAddresses(addresses);
@@ -155,7 +159,7 @@ public class CustomerProfileService {
         Set<Address> addresses = customer.getAddresses();
         Set<AddressDTO> addressDTOs = new HashSet<>();
         addresses.forEach(a -> {
-            AddressDTO addressDTO = modelMapper.map(a,AddressDTO.class);
+            AddressDTO addressDTO = modelMapper.map(a, AddressDTO.class);
             addressDTOs.add(addressDTO);
         });
         return addressDTOs;
@@ -165,20 +169,20 @@ public class CustomerProfileService {
     public boolean deleteAddress(Long id) {
         Optional<Address> address = addressRepo.findById(id);
         if (!address.isPresent()) {
-            throw  new ResourceNotFoundException("no address fount with id " + id);
+            throw new ResourceNotFoundException("no address fount with id " + id);
         }
         addressRepo.deleteById(id);
         return true;
     }
 
-    public boolean updateAddress(Long id,AddressDTO addressDTO,HttpServletRequest request) {
+    public boolean updateAddress(Long id, AddressDTO addressDTO, HttpServletRequest request) {
         Optional<Address> address = addressRepo.findById(id);
         if (!address.isPresent()) {
-            throw  new ResourceNotFoundException("no address fount with id " + id);
+            throw new ResourceNotFoundException("no address fount with id " + id);
         }
         Customer customer = customerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
         Set<Address> addresses = customer.getAddresses();
-        addresses.forEach(a->{
+        addresses.forEach(a -> {
             if (a.getId().compareTo(address.get().getId()) == 0) {
                 a.setCity(addressDTO.getCity());
                 a.setCountry(addressDTO.getCountry());
