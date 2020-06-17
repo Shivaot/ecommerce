@@ -32,8 +32,8 @@ class CategoryServiceTest {
     // will not always pass
     @Test
     void shouldCreateAChildCategory() {
-        String categoryName = "Suits";
-        Optional<Long> parentId = Optional.of(7L);
+        String categoryName = "Mobile";
+        Optional<Long> parentId = Optional.of(12L);
         String result = categoryService.addCategory(categoryName,parentId);
         assertThat(result).contains("Success");
     }
