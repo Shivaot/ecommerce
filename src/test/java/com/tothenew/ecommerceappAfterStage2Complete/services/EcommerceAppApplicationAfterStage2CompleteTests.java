@@ -11,7 +11,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @SpringBootTest
-class EcommerceAppApplicationAfterStage2CompleteTests {
+class
+EcommerceAppApplicationAfterStage2CompleteTests {
 
     @Autowired
     UserRepo userRepo;

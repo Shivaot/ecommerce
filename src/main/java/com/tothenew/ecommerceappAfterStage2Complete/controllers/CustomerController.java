@@ -8,6 +8,8 @@ import com.tothenew.ecommerceappAfterStage2Complete.services.CategoryService;
 import com.tothenew.ecommerceappAfterStage2Complete.services.CustomerProfileService;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,8 @@ public class CustomerController {
     @Autowired
     private ModelMapper modelMapper;
 
+    Logger logger = LoggerFactory.getLogger(CustomerController.class);
+
     @GetMapping("")
     public CustomerProfileDTO viewProfile(HttpServletRequest request) throws IOException {
         CustomerProfileDTO customerProfileDTO = modelMapper.map(customerProfileService.viewProfile(request),CustomerProfileDTO.class);
@@ -45,16 +49,14 @@ public class CustomerController {
             });
         }
         catch (Exception ex) {
-            System.out.println(ex);
+            logger.error("Exception Occurred",ex);
         }
         try {
             String[] arr = matchingFiles[0].toString().split("users/");
             customerProfileDTO.setImage("http://localhost:8080/users/" + arr[1]);
         } catch (Exception ex) {
-            System.out.println(ex);
+            logger.error("Exception Occurred",ex);
         }
-
-
         return customerProfileDTO;
     }
 

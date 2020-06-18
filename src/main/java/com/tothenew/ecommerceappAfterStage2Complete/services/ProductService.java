@@ -156,7 +156,6 @@ public class ProductService {
             throw new  ResourceNotFoundException("invalid seller");
         }
         product.get().setDeleted(true);
-//        productRepo.softDelete(id);
         productRepo.save(product.get());
         return "Success";
     }
@@ -329,7 +328,9 @@ public class ProductService {
                     }
                 });
             }
-            catch (Exception ex) {}
+            catch (Exception ex) {
+                logger.error("Exception Occurred",ex);
+            }
             if (matchingFiles.length>0) {
                 File file = new File(matchingFiles[0].toString());
                 byte[] fileContent = new byte[0];

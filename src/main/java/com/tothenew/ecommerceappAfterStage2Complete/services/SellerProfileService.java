@@ -16,6 +16,8 @@ import com.tothenew.ecommerceappAfterStage2Complete.utils.GstValidator;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.PasswordValidator;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,6 +55,8 @@ public class SellerProfileService {
     @Autowired
     GstValidator gstValidator;
 
+    Logger logger = LoggerFactory.getLogger(SellerProfileService.class);
+
     public SellerProfileDTO viewProfile(HttpServletRequest request) throws IOException {
         String sellerEmail = userEmailFromToken.getUserEmail(request);
         Seller seller = sellerRepo.findByEmail(sellerEmail);
@@ -72,7 +76,7 @@ public class SellerProfileService {
             String[] arr = matchingFiles[0].toString().split("users/");
             sellerProfileDTO.setImage("http://localhost:8080/users/" + arr[1]);
         } catch (Exception ex) {
-            System.out.println(ex);
+            logger.error("Exception Occurred",ex);
         }
 
         Set<Address> addresses = seller.getAddresses();
@@ -107,6 +111,7 @@ public class SellerProfileService {
                     return "gst should be unique";
                 }
             } catch (NullPointerException ex) {
+                logger.error("Exception Occurred",ex);
             }
         }
         Seller seller = sellerRepo.findByEmail(userEmailFromToken.getUserEmail(request));
@@ -131,6 +136,7 @@ public class SellerProfileService {
                         return "company name should be unique";
                     }
                 } catch (NullPointerException ex) {
+                    logger.error("Exception Occurred",ex);
                 }
                 seller.setCompanyName(sellerProfileDTO.getCompanyName());
             }
@@ -152,8 +158,9 @@ public class SellerProfileService {
                         fi = new File(matchingFiles[0].toString());
                         Path fileToDeletePath = Paths.get(String.valueOf(fi));
                         Files.delete(fileToDeletePath);
-                    } catch(Exception ex) {}
-
+                    } catch(Exception ex) {
+                        logger.error("Exception Occurred",ex);
+                    }
                     String parts[] = sellerProfileDTO.getImage().split(",");
                     String imageName = parts[0];
                     String fileExtensionArr[] = imageName.split("/");
@@ -176,13 +183,13 @@ public class SellerProfileService {
                     File outputFile = new File(path+"."+fileExtension[0]);
                     ImageIO.write(image, fileExtension[0], outputFile);
                 }
-                catch(Exception e)
-                {
+                catch(Exception e) {
                     return "error = "+e;
                 }
             }
-        } catch (NullPointerException ex) {}
-
+        } catch (NullPointerException ex) {
+            logger.error("Exception Occurred",ex);
+        }
         sellerRepo.save(seller);
         return "Success";
     }

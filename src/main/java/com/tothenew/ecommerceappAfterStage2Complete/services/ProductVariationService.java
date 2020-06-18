@@ -10,6 +10,8 @@ import com.tothenew.ecommerceappAfterStage2Complete.repositories.ProductRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.ProductVariationRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.repositories.SellerRepo;
 import com.tothenew.ecommerceappAfterStage2Complete.utils.UserEmailFromToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,6 +43,8 @@ public class ProductVariationService {
     @Autowired
     SellerRepo sellerRepo;
 
+    Logger logger = LoggerFactory.getLogger(ProductVariation.class);
+
     public String add(ProductVariationDTO productVariationDTO) {
         Optional<Product> product = productRepo.findById(productVariationDTO.getProductId());
         if (!product.isPresent()) {
@@ -56,7 +60,9 @@ public class ProductVariationService {
                 if (productVariationDTO.getFiledIdValues() == null) {
                     return "there should be atleast one metadata and value";
                 }
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+                logger.error("Exception Occurred", ex);
+            }
 
             if (productVariationDTO.getPrice() != null) {
                 if (productVariationDTO.getPrice() <= 0) {
@@ -70,6 +76,7 @@ public class ProductVariationService {
                 return "product is deleted";
             }
         } catch (Exception ex) {
+            logger.error("Exception Occurred", ex);
         }
 
         List<Object[]> categoryFieldValues = valuesRepo.findCategoryMetadataFieldValuesById(product.get().getCategory().getId());
@@ -161,6 +168,7 @@ public class ProductVariationService {
                     File outputFile = new File(pathS + "." + fileExtension[0]);
                     ImageIO.write(img, fileExtension[0], outputFile);
                 } catch (Exception e) {
+                    logger.error("Exception Occurred", e);
                 }
 
             }
@@ -217,7 +225,7 @@ public class ProductVariationService {
             throw new ResourceNotFoundException("invalid seller");
         }
         if (product.get().getDeleted()) {
-                throw new ResourceNotFoundException("deleted product");
+            throw new ResourceNotFoundException("deleted product");
         }
         List<ProductVariation> productVariations = variationRepo.getAll(productId, PageRequest.of(Integer.parseInt(page), Integer.parseInt(size), Sort.by(Sort.Direction.fromString(order), sortBy)));
         return productVariations;
@@ -300,9 +308,8 @@ public class ProductVariationService {
                     Path fileToDeletePath = Paths.get(String.valueOf(fi));
                     Files.delete(fileToDeletePath);
                 } catch (Exception ex) {
+                    logger.error("Exception Occurred", ex);
                 }
-
-
                 String parts[] = productVariationDTO.getPrimaryImage().split(",");
                 String imageName = parts[0];
                 String fileExtensionArr[] = imageName.split("/");
@@ -329,7 +336,7 @@ public class ProductVariationService {
             }
         }
 
-        if (productVariationDTO.getSecondaryImages() != null && productVariationDTO.getSecondaryImages().size() > 0 ) {
+        if (productVariationDTO.getSecondaryImages() != null && productVariationDTO.getSecondaryImages().size() > 0) {
             File fi;
             File[] matchingFiles = new File[5];
             try {
@@ -347,8 +354,8 @@ public class ProductVariationService {
                         Files.delete(fileToDeletePath);
                     }
                 } catch (Exception ex) {
+                    logger.error("Exception Occurred", ex);
                 }
-
                 for (int i = 0; i < productVariationDTO.getSecondaryImages().size(); i++) {
                     try {
                         String parts[] = productVariationDTO.getSecondaryImages().get(i).split(",");
@@ -370,18 +377,15 @@ public class ProductVariationService {
                         img = ImageIO.read(bis);
                         bis.close();
                         String pathS = "/home/shiva/software/afterStage2/src/main/resources/static/products/" + +productVariation.get().getProduct().getId() + "/variations/" + productVariationDTO.getProductId() + "SI" + i;
-
-                        System.out.println(pathS + "---------------");
                         File outputFile = new File(pathS + "." + fileExtension[0]);
                         ImageIO.write(img, fileExtension[0], outputFile);
                     } catch (Exception e) {
+                        logger.error("Exception Occurred",e);
                     }
-
                 }
-
             } catch (Exception ex) {
+                logger.error("Exception Occurred",ex);
             }
-
         }
         variationRepo.save(productVariation.get());
         return "Success";
